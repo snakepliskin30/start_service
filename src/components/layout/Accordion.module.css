@@ -39,6 +39,11 @@
 
 .content {
   background-color: #fff;
+  position: relative;
+}
+
+/* .content {
+  background-color: #fff;
   max-height: 0px;
   overflow: hidden;
   transition: all 0.2s linear;
@@ -49,4 +54,4 @@
   max-height: 9999px;
   transition: all 1.5s linear;
   transition-delay: 0s;
-}
+} */

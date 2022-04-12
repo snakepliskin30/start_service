@@ -6,6 +6,7 @@ import Input from "../ui/Input";
 import InputNumber from "../ui/InputNumber";
 import ButtonSubmit from "../ui/ButtonSubmit";
 import ButtonCancel from "../ui/ButtonCancel";
+import Spinner from "../ui/Spinner";
 
 //Datatable Modules
 import "jquery/dist/jquery.min.js";
@@ -50,30 +51,95 @@ const premiseArray = [
 ];
 
 const PremiseInfo = () => {
-  const [renderTableValue, setRenderTable] = useState(1);
-  // useEffect(() => {
-  //   $("#searchResults").DataTable({
-  //     paging: false,
-  //     info: false,
-  //     bFilter: false,
-  //   });
-  //   console.log("useEffect");
-  // }, [renderTableValue]);
+  const [streetName, setStreetName] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("GA");
+  const [zip, setZip] = useState("");
+  const [apiCallFlag, setApiCallFlag] = useState(false);
+  const [premiseResults, setPremiseResults] = useState([]);
+  const [searchFormShow, setSearchFormShow] = useState(true);
+  const [searchResultShow, setSearchResultShow] = useState(false);
+  const [searchInfoShow, setSearchInfoShow] = useState(false);
 
-  // const renderTable = () => {
-  //   setRenderTable((currentValue) => ++currentValue);
-  //   console.log(renderTableValue);
-  // };
+  console.log("component ran");
+  async function searchFormHandler(e) {
+    e.preventDefault();
+    setSearchResultShow(false);
+    setSearchInfoShow(false);
+    setApiCallFlag(true);
+
+    const Request = {};
+    const Payload = {};
+
+    Payload.formattedAddress = streetName;
+    Payload.city = city;
+    Payload.state = state;
+    Payload.zip = zip;
+
+    Request.Payload = Payload;
+
+    const requestString = JSON.stringify(Request);
+    const url = `https://gpcservice--tst1.custhelp.com/cgi-bin/gpcservice.cfg/php/custom/socoapicalls_noauth.php`;
+    const formData = new FormData();
+    formData.append("data", requestString);
+    formData.append("apiUrl", "CUSTOM_CFG_START_SEARCH_PREMISE_URL");
+
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "same-origin",
+      body: formData,
+    });
+
+    const data = await response.json();
+    const premiseResults = Array.from(new Set(data.Payload.AddressInfo.map((s) => s.premiseNo))).map((premiseNum) => data.Payload.AddressInfo.find((d) => d.premiseNo === premiseNum));
+    setPremiseResults(premiseResults);
+    setSearchFormShow(false);
+    setSearchResultShow(true);
+    setSearchInfoShow(false);
+    setApiCallFlag(false);
+  }
+
+  async function getPremiseDetailsHandler(premise) {
+    const Request = {};
+    const Header = {};
+    const Payload = {};
+    const PendingOrdersAndObligations = {};
+
+    Header.verb = "post";
+    Header.noun = "getPremise";
+    Header.revision = "1.4";
+    Header.userId = "EU_OSC";
+    Header.organization = "SOCO";
+    Header.transactionId = "1234567";
+
+    PendingOrdersAndObligations.premiseNo = premise.premiseNo;
+    PendingOrdersAndObligations.companyCode = "2";
+
+    Payload.PendingOrdersAndObligations = PendingOrdersAndObligations;
+
+    Request.Header = Header;
+    Request.Payload = Payload;
+
+    const requestString = JSON.stringify(Request);
+    console.log(requestString);
+  }
+
+  useEffect(() => {
+    if (premiseResults.length > 0) {
+      setSearchResultShow(true);
+    }
+  }, [premiseResults]);
 
   return (
-    <Accordion title="Premise Address" id="premiseinfo">
+    <Fragment>
+      {apiCallFlag && <Spinner />}
       <div className={classes.main}>
-        <Section title="Search" open={true}>
-          <form className={classes.searchForm}>
-            <Input label="Street Name" id="streetName" />
-            <Input label="City" id="city" />
-            <Input label="State" id="state" />
-            <InputNumber label="Zip" id="zip" options={{ blocks: [4] }} />
+        <Section title="Search" open={searchFormShow}>
+          <form className={classes.searchForm} onSubmit={searchFormHandler}>
+            <Input label="Street Name" id="streetName" value={streetName} onChange={setStreetName} />
+            <Input label="City" id="city" value={city} onChange={setCity} />
+            <Input label="State" id="state" value={state} onChange={setState} />
+            <InputNumber label="Zip" id="zip" options={{ blocks: [4] }} value={zip} onChange={setZip} />
             <div className="btnGrp">
               <ButtonSubmit>Submit</ButtonSubmit>
               <ButtonCancel>Cancel</ButtonCancel>
@@ -81,30 +147,32 @@ const PremiseInfo = () => {
           </form>
         </Section>
 
-        <Section title="Search Results" open={false}>
+        <Section title="Search Results" open={searchResultShow}>
           <table id="searchResults" className="table table-striped">
             <thead>
               <tr>
                 <th>Street Name</th>
+                <th>Address Notes</th>
                 <th>City</th>
                 <th>State</th>
                 <th>Zip</th>
               </tr>
             </thead>
             <tbody>
-              {premiseArray.map((premise, index) => (
-                <tr key={index}>
-                  <td>{premise.streetName}</td>
+              {premiseResults.map((premise, index) => (
+                <tr key={index} className={classes.resultsrow} onClick={getPremiseDetailsHandler.bind(null, premise)}>
+                  <td>{premise.addressLine1}</td>
+                  <td>{premise.AddressNotes}</td>
                   <td>{premise.city}</td>
                   <td>{premise.state}</td>
-                  <td>{premise.zip}</td>
+                  <td>{premise.zipCode}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </Section>
 
-        <Section title="Premise Information" open={false}>
+        <Section title="Premise Information" open={searchInfoShow}>
           <div className={classes.premiseInfo}>
             <Section title="Details" open={true} noBtn>
               <div className={classes.premiseInfoDetails}>
@@ -162,7 +230,7 @@ const PremiseInfo = () => {
           </div>
         </div>
       </div>
-    </Accordion>
+    </Fragment>
   );
 };
 

@@ -29,3 +29,8 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
 }
+
+.resultsrow:hover {
+  cursor: pointer;
+  background-color: #e3e3e3 !important;
+}
