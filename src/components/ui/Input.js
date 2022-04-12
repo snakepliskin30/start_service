@@ -12,6 +12,10 @@ const Input = (props) => {
         id={props.id}
         type={props.type ? props.type : "text"}
         maxLength={props.length ? props.length : ""}
+        value={props.value}
+        onChange={(e) => {
+          props.onChange(e.target.value);
+        }}
       />
     </div>
   );

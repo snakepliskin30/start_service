@@ -50,7 +50,10 @@ const premiseArray = [
 ];
 
 const PremiseInfo = () => {
-  const [renderTableValue, setRenderTable] = useState(1);
+  const [streetName, setStreeName] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("GA");
+  const [zip, setZip] = useState("");
   // useEffect(() => {
   //   $("#searchResults").DataTable({
   //     paging: false,
@@ -65,15 +68,34 @@ const PremiseInfo = () => {
   //   console.log(renderTableValue);
   // };
 
+  const searchPremiseFormHandler = (e) => {
+    e.preventDefault();
+    console.log(streetName, city, state, zip);
+  };
+
   return (
     <Accordion title="Premise Address" id="premiseinfo">
       <div className={classes.main}>
         <Section title="Search" open={true}>
-          <form className={classes.searchForm}>
-            <Input label="Street Name" id="streetName" />
-            <Input label="City" id="city" />
-            <Input label="State" id="state" />
-            <InputNumber label="Zip" id="zip" options={{ blocks: [4] }} />
+          <form
+            className={classes.searchForm}
+            onSubmit={searchPremiseFormHandler}
+          >
+            <Input
+              label="Street Name"
+              id="streetName"
+              value={streetName}
+              onChange={setStreeName}
+            />
+            <Input label="City" id="city" value={city} onChange={setCity} />
+            <Input label="State" id="state" value={state} onChange={setState} />
+            <InputNumber
+              label="Zip"
+              id="zip"
+              options={{ blocks: [4] }}
+              value={zip}
+              onChange={setZip}
+            />
             <div className="btnGrp">
               <ButtonSubmit>Submit</ButtonSubmit>
               <ButtonCancel>Cancel</ButtonCancel>

@@ -14,7 +14,14 @@ const InputDatePicker = (props) => {
       <div className={classes.label} htmlFor={props.id}>
         {props.label}
       </div>
-      <input id={props.id} type={props.type ? props.type : "text"} />
+      <input
+        id={props.id}
+        type={props.type ? props.type : "text"}
+        value={props.value}
+        onChange={(e) => {
+          props.onChange(e.target.value);
+        }}
+      />
     </div>
   );
 };

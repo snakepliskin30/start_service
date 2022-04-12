@@ -15,7 +15,13 @@ const InputNumber = (props) => {
       <div className={classes.label} htmlFor={props.id}>
         {props.label}
       </div>
-      <Cleave options={props.options} />
+      <Cleave
+        options={{ ...props.options, numericOnly: true }}
+        value={props.value}
+        onChange={(e) => {
+          props.onChange(e.target.value);
+        }}
+      />
     </div>
   );
 };

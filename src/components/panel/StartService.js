@@ -1,15 +1,16 @@
-import { Fragment } from "react";
-import CustomerInfo from "./CustomerInfo";
+import React, { Fragment, Suspense } from "react";
 import PremiseInfo from "./PremiseInfo";
 
 import classes from "./StartService.css";
 
+const CustomerInfo = React.lazy(() => import("./CustomerInfo"));
+
 const StartService = () => {
   return (
-    <Fragment>
+    <div>
       <PremiseInfo />
       <CustomerInfo />
-    </Fragment>
+    </div>
   );
 };
 
