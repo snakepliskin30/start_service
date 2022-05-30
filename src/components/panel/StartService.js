@@ -8,12 +8,8 @@ import classes from "./StartService.css";
 const StartService = () => {
   return (
     <Fragment>
-      <Accordion title="Premise Address" id="premiseinfo">
-        <PremiseInfo />
-      </Accordion>
-      <Accordion title="Customer Information" id="custInfo">
-        <CustomerInfo />
-      </Accordion>
+      <PremiseInfo />
+      <CustomerInfo />
     </Fragment>
   );
 };

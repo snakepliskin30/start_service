@@ -3,7 +3,7 @@
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 10px;
-  row-gap: 20px;
+  row-gap: 40px;
   align-items: flex-end;
   grid-template-areas:
     "a b b b c c c d d d e z"
@@ -12,7 +12,8 @@
     "k k k k k k l l l m m m"
     "n n n n . . . . . . . ."
     "o o o o o o p p p p p p"
-    ". . . . . . . . q q q q";
+    ". . . . . . . . q q q q"
+    ". . . . . . . . r r r r";
 }
 
 .item_a {
@@ -77,6 +78,11 @@
 
 .item_p {
   grid-area: p;
+}
+
+.item_r {
+  grid-area: r;
+  margin-left: auto;
 }
 
 .item_q {
