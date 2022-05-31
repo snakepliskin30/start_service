@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState, useCallback } from "react";
+import React, { Fragment, useEffect, useState, useCallback, useContext } from "react";
 import useSearchPremise from "../../hooks/useSearchPremise";
 import usePremiseDetails from "../../hooks/usePremiseDetails";
 import Accordion from "../layout/Accordion";
@@ -19,41 +19,10 @@ import $ from "jquery";
 import classes from "./PremiseInfo.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const premiseArray = [
-  {
-    streetName: "800 Willow Ridge Way",
-    city: "Atlanta",
-    state: "Georgia",
-    zip: "1234",
-  },
-  {
-    streetName: "800 Willow Ridge Way",
-    city: "Atlanta",
-    state: "Georgia",
-    zip: "1234",
-  },
-  {
-    streetName: "800 Willow Ridge Way",
-    city: "Atlanta",
-    state: "Georgia",
-    zip: "1234",
-  },
-  {
-    streetName: "800 Willow Ridge Way",
-    city: "Atlanta",
-    state: "Georgia",
-    zip: "1234",
-  },
-  {
-    streetName: "800 Willow Ridge Way",
-    city: "Atlanta",
-    state: "Georgia",
-    zip: "1234",
-  },
-];
+import StartServiceContext from "../../store/StartServiceContext";
 
-const PremiseInfo = () => {
-  console.log("premiseinfo renders");
+const PremiseInfo = (props) => {
+  const ctx = useContext(StartServiceContext);
   const [streetName, setStreetName] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("GA");
@@ -74,14 +43,9 @@ const PremiseInfo = () => {
   };
 
   const getPremiseDetailsHandler = async (premise) => {
-    const result = await getPremiseDetails(
-      premise.premiseNo,
-      premise.companyCode === "GPC" ? "2" : "5"
-    );
+    const result = await getPremiseDetails(premise.premiseNo, premise.companyCode === "GPC" ? "2" : "5");
 
-    const meterDetails = result.GetPremise.ServicePoints.find(
-      (i) => i.ServicePointType.code === "0200"
-    )?.Meters[0];
+    const meterDetails = result.GetPremise.ServicePoints.find((i) => i.ServicePointType.code === "0200")?.Meters[0];
     const meterDetails_gm = result.GetPremiseMeters.Premise?.ServicePoint[0];
     setPremiseDetails({
       meterPointStatus: meterDetails.MeterStatus.code,
@@ -121,34 +85,22 @@ const PremiseInfo = () => {
   const searchInfoSectionClick = useCallback(() => {
     setSearchInfoShow((current) => !current);
   }, []);
+  const premiseNext = () => {
+    ctx.setOpenPremise(false);
+    ctx.setOpenCustomerInfo(true);
+  };
 
   return (
-    <Accordion title="Premise Address" id="premiseinfo">
+    <Accordion title="Premise Address" id="premiseinfo" open={ctx.openPremise} setOpen={ctx.setOpenPremise}>
       {(premiseSearchLoad || premiseDetailsLoad) && <Spinner />}
       <div className={classes.main}>
         <Section title="Search" onClick={searchFormSectionClick}>
           {searchFormShow && (
             <form className={classes.searchForm} onSubmit={searchFormHandler}>
-              <Input
-                label="Street Name"
-                id="streetName"
-                value={streetName}
-                onChange={setStreetName}
-              />
+              <Input label="Street Name" id="streetName" value={streetName} onChange={setStreetName} />
               <Input label="City" id="city" value={city} onChange={setCity} />
-              <Input
-                label="State"
-                id="state"
-                value={state}
-                onChange={setState}
-              />
-              <InputNumber
-                label="Zip"
-                id="zip"
-                options={{ blocks: [4] }}
-                value={zip}
-                onChange={setZip}
-              />
+              <Input label="State" id="state" value={state} onChange={setState} />
+              <InputNumber label="Zip" id="zip" options={{ blocks: [5] }} value={zip} onChange={setZip} />
               <div className="btnGrp">
                 <ButtonSubmit>Submit</ButtonSubmit>
                 <ButtonCancel>Cancel</ButtonCancel>
@@ -171,11 +123,7 @@ const PremiseInfo = () => {
               </thead>
               <tbody>
                 {premiseResults.map((premise, index) => (
-                  <tr
-                    key={index}
-                    className={classes.resultsrow}
-                    onClick={getPremiseDetailsHandler.bind(null, premise)}
-                  >
+                  <tr key={index} className={classes.resultsrow} onClick={getPremiseDetailsHandler.bind(null, premise)}>
                     <td>{premise.addressLine1}</td>
                     <td>{premise.AddressNotes}</td>
                     <td>{premise.city}</td>
@@ -198,41 +146,18 @@ const PremiseInfo = () => {
                     gridTemplateColumns: "repeat(2, 1fr)",
                   }}
                 >
-                  <Field
-                    label="Premise Address"
-                    value={
-                      premiseDetails.detail1 + "\n" + premiseDetails.detail2
-                    }
-                  ></Field>
-                  <Field
-                    label="Address Notes"
-                    value={premiseDetails.addressNotes}
-                  ></Field>
+                  <Field label="Premise Address" value={premiseDetails.detail1 + "\n" + premiseDetails.detail2}></Field>
+                  <Field label="Address Notes" value={premiseDetails.addressNotes}></Field>
                 </div>
                 <div></div>
                 <Section title="Details" open={true} noBtn>
                   <div className={classes.premiseInfoDetails}>
-                    <Field
-                      label="Meter Point Status"
-                      value={premiseDetails.meterPointStatus}
-                    ></Field>
-                    <Field
-                      label="Meter Status"
-                      value={premiseDetails.meterStatus}
-                    ></Field>
-                    <Field
-                      label="RC/DC Meter"
-                      value={premiseDetails.rddcMeter}
-                    ></Field>
-                    <Field
-                      label="Revenue Class"
-                      value={premiseDetails.revenueClass}
-                    ></Field>
+                    <Field label="Meter Point Status" value={premiseDetails.meterPointStatus}></Field>
+                    <Field label="Meter Status" value={premiseDetails.meterStatus}></Field>
+                    <Field label="RC/DC Meter" value={premiseDetails.rddcMeter}></Field>
+                    <Field label="Revenue Class" value={premiseDetails.revenueClass}></Field>
                     <Field label="Rate" value="Residential"></Field>
-                    <Field
-                      label="PrePay Eligible"
-                      value={premiseDetails.prepayEligible}
-                    ></Field>
+                    <Field label="PrePay Eligible" value={premiseDetails.prepayEligible}></Field>
                   </div>
                 </Section>
                 <Section title="Pending Orders" open={true} noBtn>
@@ -274,11 +199,7 @@ const PremiseInfo = () => {
                     </tbody>
                   </table>
                 )}
-                {premiseDetails?.obligations?.length === 0 && (
-                  <h6 style={{ textAlign: "center", color: "blue" }}>
-                    This premise has no obligations
-                  </h6>
-                )}
+                {premiseDetails?.obligations?.length === 0 && <h6 style={{ textAlign: "center", color: "blue" }}>This premise has no obligations</h6>}
               </Section>
             </div>
           )}
@@ -286,7 +207,7 @@ const PremiseInfo = () => {
 
         <div className="btnGrp">
           <div style={{ marginLeft: "auto" }}>
-            <ButtonSubmit>Next</ButtonSubmit>
+            <ButtonSubmit onClick={premiseNext}>Next</ButtonSubmit>
           </div>
         </div>
       </div>

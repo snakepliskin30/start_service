@@ -1,0 +1,28 @@
+.main {
+  padding: 20px;
+}
+
+.deposit_info {
+  display: flex;
+  justify-content: flex-start;
+  gap: 100px;
+  margin-bottom: 40px;
+}
+
+.depositForm {
+  display: flex;
+  gap: 30px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.depositForm > * {
+  flex: 1 1 100%;
+}
+
+.deposit_btn {
+  border-top: 2px solid #aaa;
+  padding: 20px 0;
+  display: flex;
+  justify-content: flex-end;
+}

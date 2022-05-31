@@ -1,0 +1,29 @@
+.main {
+  padding: 20px;
+}
+
+.lease_info {
+  display: flex;
+  justify-content: flex-start;
+  gap: 100px;
+  margin-bottom: 40px;
+}
+
+.leaseForm {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.leaseForm > * {
+  flex: 1 1 100%;
+}
+
+.lease_btn {
+  border-top: 2px solid #aaa;
+  padding: 20px 0;
+  display: flex;
+  justify-content: flex-end;
+}

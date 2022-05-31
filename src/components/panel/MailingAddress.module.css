@@ -1,0 +1,28 @@
+.main {
+  padding: 20px;
+}
+
+.mailing_info {
+  display: flex;
+  justify-content: flex-start;
+  gap: 100px;
+  margin-bottom: 40px;
+}
+
+.mailingForm {
+  display: flex;
+  gap: 30px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.mailingForm > * {
+  flex: 1 1 100%;
+}
+
+.mailing_btn {
+  border-top: 2px solid #aaa;
+  padding: 20px 0;
+  display: flex;
+  justify-content: flex-end;
+}

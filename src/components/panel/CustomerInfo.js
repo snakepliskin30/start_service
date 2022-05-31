@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Accordion from "../layout/Accordion";
 import Input from "../ui/Input";
 import InputNumber from "../ui/InputNumber";
@@ -12,7 +12,10 @@ import classes from "./CustomerInfo.module.css";
 
 import useAddUpdateCustomer from "../../hooks/useAddUpdateCustomer";
 
+import StartServiceContext from "../../store/StartServiceContext";
+
 const CustomerInfo = () => {
+  const ctx = useContext(StartServiceContext);
   const [title, setTitle] = useState("");
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
@@ -54,7 +57,7 @@ const CustomerInfo = () => {
       primaryPhone,
       altPhone,
       // eslint-disable-next-line no-undef
-      dob: moment(dob, "MM/DD/YYYY").format("YYYY-MM-DD"),
+      dob: dob ? moment(dob, "MM/DD/YYYY").format("YYYY-MM-DD") : "0001-01-01",
       ssnNotProvided,
       email,
       driversLicense,
@@ -67,8 +70,19 @@ const CustomerInfo = () => {
     addUpdateCustomer(custInfo);
   };
 
+  const custInfoNext = () => {
+    console.log("test");
+    ctx.setOpenCustomerInfo(false);
+    ctx.setOpenCreditCheck(true);
+  };
+
+  const custInfoPrevious = () => {
+    ctx.setOpenCustomerInfo(false);
+    ctx.setOpenPremise(true);
+  };
+
   return (
-    <Accordion title="Customer Information" id="custInfo">
+    <Accordion title="Customer Information" id="custInfo" open={ctx.openCustomerInfo} setOpen={ctx.setOpenCustomerInfo}>
       {/* {customerInfoLoad && <Spinner />} */}
       <form onSubmit={customerInfoHandler}>
         <div className={classes.main}>
@@ -76,70 +90,28 @@ const CustomerInfo = () => {
             <Input label="Title" id="title" value={title} onChange={setTitle} />
           </div>
           <div className={classes.item_b}>
-            <Input
-              label="First Name"
-              id="firstName"
-              required={true}
-              value={firstName}
-              onChange={setFirstName}
-            />
+            <Input label="First Name" id="firstName" required={true} value={firstName} onChange={setFirstName} />
           </div>
           <div className={classes.item_c}>
-            <Input
-              label="Middle Name"
-              id="middleName"
-              value={middleName}
-              onChange={setMiddleName}
-            />
+            <Input label="Middle Name" id="middleName" value={middleName} onChange={setMiddleName} />
           </div>
           <div className={classes.item_d}>
-            <Input
-              label="Last Name"
-              id="lastName"
-              required={true}
-              value={lastName}
-              onChange={setLastName}
-            />
+            <Input label="Last Name" id="lastName" required={true} value={lastName} onChange={setLastName} />
           </div>
           <div className={classes.item_e}>
-            <Input
-              label="Suffix"
-              id="suffix"
-              value={suffix}
-              onChange={setSuffix}
-            />
+            <Input label="Suffix" id="suffix" value={suffix} onChange={setSuffix} />
           </div>
           <div className={classes.item_x}>
             <ButtonCancel>Copy</ButtonCancel>
           </div>
           <div className={classes.item_f}>
-            <InputNumber
-              label="SSN/TIN"
-              id="ssntin"
-              options={{ blocks: [3, 2, 3], delimiter: "-" }}
-              required={true}
-              value={ssn}
-              onChange={setSSN}
-            />
+            <InputNumber label="SSN/TIN" id="ssntin" options={{ blocks: [3, 2, 3], delimiter: "-" }} required={true} value={ssn} onChange={setSSN} />
           </div>
           <div className={classes.item_g}>
-            <InputNumber
-              label="Primary Phone"
-              id="primaryPhone"
-              options={{ blocks: [3, 3, 4], delimiter: "-" }}
-              required={true}
-              value={primaryPhone}
-              onChange={setPrimaryPhone}
-            />
+            <InputNumber label="Primary Phone" id="primaryPhone" options={{ blocks: [3, 3, 4], delimiter: "-" }} required={true} value={primaryPhone} onChange={setPrimaryPhone} />
           </div>
           <div className={classes.item_h}>
-            <InputNumber
-              label="Alternate Phone"
-              id="altPhone"
-              options={{ blocks: [3, 3, 4], delimiter: "-" }}
-              value={altPhone}
-              onChange={setAltPhone}
-            />
+            <InputNumber label="Alternate Phone" id="altPhone" options={{ blocks: [3, 3, 4], delimiter: "-" }} value={altPhone} onChange={setAltPhone} />
           </div>
           <div className={classes.item_i}>
             <InputDatePicker
@@ -164,31 +136,13 @@ const CustomerInfo = () => {
             <label htmlFor="ssnnotprovided">SSN/TIN not provided</label>
           </div>
           <div className={classes.item_k}>
-            <Input
-              label="Email Address"
-              id="email"
-              required={true}
-              value={email}
-              onChange={setEmail}
-            />
+            <Input label="Email Address" id="email" required={true} value={email} onChange={setEmail} />
           </div>
           <div className={classes.item_l}>
-            <InputNumber
-              label="Driver's License Number"
-              id="driverslicense"
-              options={{ blocks: [15] }}
-              value={driversLicense}
-              onChange={setDriversLicense}
-            />
+            <InputNumber label="Driver's License Number" id="driverslicense" options={{ blocks: [15] }} value={driversLicense} onChange={setDriversLicense} />
           </div>
           <div className={classes.item_m}>
-            <Input
-              label="State"
-              id="state"
-              required={true}
-              value={driversLicenseState}
-              onChange={setDriversLicenseState}
-            />
+            <Input label="State" id="state" required={true} value={driversLicenseState} onChange={setDriversLicenseState} />
           </div>
           <div className={`${classes.item_n} checkbox`}>
             <input
@@ -203,29 +157,17 @@ const CustomerInfo = () => {
             <label htmlFor="emailnotprovided">Email address not provided</label>
           </div>
           <div className={classes.item_o}>
-            <TextArea
-              label="Other Customer Information"
-              id="otherInfo"
-              required={true}
-              value={otherInfo}
-              onChange={setOtherInfo}
-            />
+            <TextArea label="Other Customer Information" id="otherInfo" required={true} value={otherInfo} onChange={setOtherInfo} />
           </div>
           <div className={classes.item_p}>
-            <TextArea
-              label="Comments"
-              id="comments"
-              required={true}
-              value={comments}
-              onChange={setComments}
-            />
+            <TextArea label="Comments" id="comments" required={true} value={comments} onChange={setComments} />
           </div>
           <div className={`${classes.item_q} btnGrp`}>
             <ButtonCancel type="Submit">Add Customer</ButtonCancel>
           </div>
           <div className={`${classes.item_r} btnGrp`}>
-            <ButtonSubmit>Submit</ButtonSubmit>
-            <ButtonCancel>Cancel</ButtonCancel>
+            <ButtonCancel onClick={custInfoPrevious}>Previous</ButtonCancel>
+            <ButtonSubmit onClick={custInfoNext}>Next</ButtonSubmit>
           </div>
         </div>
       </form>

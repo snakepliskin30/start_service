@@ -7,9 +7,13 @@ input::-webkit-inner-spin-button {
 input {
   padding: 5px;
   width: 100%;
+  border: 1px solid rgb(229, 230, 230);
+  background-color: rgba(252, 252, 253);
 }
 
 input:focus {
+  order: 1px solid #3aabf0;
+  box-shadow: 0 0 3px rgba(58, 171, 240, 0.4);
   outline: none;
 }
 
@@ -42,4 +46,8 @@ input:focus {
 .required {
   color: red;
   margin-left: 3px;
+}
+
+.datepicker {
+  width: 100%;
 }
