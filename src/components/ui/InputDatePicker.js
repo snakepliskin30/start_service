@@ -8,7 +8,7 @@ const InputDatePicker = (props) => {
   const isValid = props.error ? classes.invalid : "";
   useEffect(() => {
     $(`#${props.id}`).datepicker({
-      changeYear: true,
+      changeYear: props?.changeYear ? props?.changeYear : false,
       yearRange: "-100:+0",
       onSelect: props.onChange,
     });

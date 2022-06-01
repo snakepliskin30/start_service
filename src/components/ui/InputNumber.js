@@ -18,6 +18,30 @@ const InputNumber = (props) => {
         onChange={(e) => {
           props.onChange(e.target.value);
         }}
+        onBlur={(e) => {
+          if (props.options?.numeral && props.options?.prefix === "$") {
+            if (
+              e.target.value.replace("$", "").trim().length === 0 ||
+              parseFloat(e.target.value.replace("$", "").trim()) === 0
+            ) {
+              props.onChange("0.00");
+            } else {
+              props.onChange(
+                parseFloat(e.target.value.replace("$", "").trim()).toFixed(2)
+              );
+            }
+          }
+        }}
+        onFocus={(e) => {
+          if (props.options?.numeral && props.options?.prefix === "$") {
+            if (
+              e.target.value.replace("$", "").trim().length === 0 ||
+              parseFloat(e.target.value.replace("$", "").trim()) === 0
+            ) {
+              e.target.value = "";
+            }
+          }
+        }}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import Accordion from "../layout/Accordion";
 import Field from "../ui/Field";
 import Input from "../ui/Input";
 import InputNumber from "../ui/InputNumber";
+import InputSelect from "../ui/InputSelect";
 import ButtonCancel from "../ui/ButtonCancel";
 import ButtonSubmit from "../ui/ButtonSubmit";
 
@@ -10,14 +11,13 @@ import classes from "./Deposit.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
 
+import { depositActionOptions } from "../../lov/options";
+
 function Deposit() {
   const ctx = useContext(StartServiceContext);
-  const [streetNumber, setStreetNumber] = useState("");
-  const [streetName, setStreetName] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
-  const runCreditHandler = () => {};
+  const [depositAction, setDepositAction] = useState("");
+  const [depositAmount, setDepositAmount] = useState("0.00");
+  const [aveMonthlyBill, setAveMonthlyBill] = useState("");
 
   const depositNext = () => {
     ctx.setOpenDeposit(false);
@@ -29,7 +29,12 @@ function Deposit() {
     ctx.setOpenCreditCheck(true);
   };
   return (
-    <Accordion title="Deposit" id="deposit" open={ctx.openDeposit} setOpen={ctx.setOpenDeposit}>
+    <Accordion
+      title="Deposit"
+      id="deposit"
+      open={ctx.openDeposit}
+      setOpen={ctx.setOpenDeposit}
+    >
       <div className={classes.main}>
         <div className={classes.deposit_info}>
           <div className={`checkbox`}>
@@ -46,11 +51,27 @@ function Deposit() {
           </div>
         </div>
 
-        <form className={classes.depositForm} onSubmit={runCreditHandler}>
-          <Input label="Deposit Action" id="depositAction" />
-          <Input label="Deposit Amount" id="depositAmount" value={streetName} onChange={setStreetName} />
+        <div className={classes.depositForm}>
+          <InputSelect
+            label="Deposit Action"
+            id="depositAction"
+            value={depositAction}
+            onChange={setDepositAction}
+            options={depositActionOptions}
+          />
+          <InputNumber
+            label="Deposit Amount"
+            id="depositAmount"
+            value={depositAmount}
+            onChange={setDepositAmount}
+            options={{
+              numeral: true,
+              numeralThousandsGroupStyle: "thousand",
+              prefix: "$",
+            }}
+          />
           <Field label="Average Monthly Bill" value="Pass" />
-        </form>
+        </div>
 
         <div className={classes.deposit_btn}>
           <div className={`${classes.item_r} btnGrp`}>

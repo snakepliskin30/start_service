@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Accordion from "../layout/Accordion";
 import Input from "../ui/Input";
 import InputNumber from "../ui/InputNumber";
@@ -9,33 +9,110 @@ import classes from "./Paperless.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
 
+import {
+  paperlessActionOptions,
+  paperlessDaysBeforeDueDateOptions,
+} from "../../lov/options";
+import InputSelect from "../ui/InputSelect";
+
 function Paperless() {
   const ctx = useContext(StartServiceContext);
-  const [streetNumber, setStreetNumber] = useState("");
-  const [streetName, setStreetName] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
+  const [paperlessAction, setPaperlessAction] = useState("");
+  const [paperlessEmail, setPaperlessEmail] = useState("");
+  const [daysBeforeDue, setDaysBeforeDue] = useState("");
+  const [emailRequired, setEmailRequired] = useState(false);
+  const [paperlessActionValidation, setPaperlessActionValidation] = useState({
+    error: "",
+  });
+  const [paperlessEmailValidation, setPaperlessEmailValidation] = useState({
+    error: "",
+  });
   const runCreditHandler = () => {};
 
   const paperlessNext = () => {
-    ctx.setOpenPaperless(false);
-    ctx.setOpenMailingAddress(true);
+    if (validate()) {
+      ctx.setOpenPaperless(false);
+      ctx.setOpenMailingAddress(true);
+    }
   };
 
   const paperlessPrevious = () => {
     ctx.setOpenPaperless(false);
     ctx.setOpenLease(true);
   };
+
+  const validate = () => {
+    let valid = true;
+    console.log("paperless action is", paperlessAction);
+    if (!paperlessAction) {
+      valid = false;
+      setPaperlessActionValidation({ error: "Paperless Action is required" });
+      setPaperlessEmailValidation({ error: "" });
+    } else {
+      if (
+        (paperlessAction === "Enroll in Paperless" ||
+          paperlessAction === "Send Paperless Info") &&
+        !paperlessEmail
+      ) {
+        valid = false;
+        setPaperlessEmailValidation({ error: "Email Address is required" });
+      } else {
+        setPaperlessEmailValidation({ error: "" });
+      }
+      setPaperlessActionValidation({ error: "" });
+    }
+    return valid;
+  };
+
+  useEffect(() => {
+    if (
+      paperlessAction === "Enroll in Paperless" ||
+      paperlessAction === "Send Paperless Info"
+    )
+      setEmailRequired(true);
+    else {
+      setEmailRequired(false);
+      setPaperlessEmailValidation({ error: "" });
+    }
+  }, [paperlessAction]);
+
   return (
-    <Accordion title="Paperless Billing" id="paperlessBilling" open={ctx.openPaperless} setOpen={ctx.setOpenPaperless}>
+    <Accordion
+      title="Paperless Billing"
+      id="paperlessBilling"
+      open={ctx.openPaperless}
+      setOpen={ctx.setOpenPaperless}
+    >
       <div className={classes.main}>
         <div className={classes.paperlessForm}>
-          <Input label="Paperless Action" id="depositAmount" value={streetName} onChange={setStreetName} required={true} />
-          <Input label="Email Address" id="depositAmount" value={streetName} onChange={setStreetName} />
-          <Input label="Days Before Due Date" id="depositAmount" value={streetName} onChange={setStreetName} />
+          <InputSelect
+            label="Paperless Action"
+            id="paperlessAction"
+            value={paperlessAction}
+            onChange={setPaperlessAction}
+            required={true}
+            error={paperlessActionValidation.error}
+            options={paperlessActionOptions}
+          />
+          <Input
+            label="Email Address"
+            id="paperlessEmailAddress"
+            value={paperlessEmail}
+            onChange={setPaperlessEmail}
+            required={emailRequired}
+            error={paperlessEmailValidation.error}
+          />
+          <Input
+            label="Days Before Due Date"
+            id="paperlessDaysBeforeDue"
+            value={daysBeforeDue}
+            onChange={setDaysBeforeDue}
+          />
         </div>
-        <div className={classes.paperless_info} style={{ justifyContent: "center" }}>
+        <div
+          className={classes.paperless_info}
+          style={{ justifyContent: "center" }}
+        >
           <div></div>
           <div className={`checkbox`}>
             <input

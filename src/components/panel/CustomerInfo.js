@@ -3,6 +3,7 @@ import Accordion from "../layout/Accordion";
 import Input from "../ui/Input";
 import InputNumber from "../ui/InputNumber";
 import InputDatePicker from "../ui/InputDatePicker";
+import InputSelect from "../ui/InputSelect";
 import TextArea from "../ui/TextArea";
 import ButtonSubmit from "../ui/ButtonSubmit";
 import ButtonCancel from "../ui/ButtonCancel";
@@ -13,6 +14,8 @@ import classes from "./CustomerInfo.module.css";
 import useAddUpdateCustomer from "../../hooks/useAddUpdateCustomer";
 
 import StartServiceContext from "../../store/StartServiceContext";
+
+import { titleOptions, suffixOptions, stateOptions } from "../../lov/options";
 
 const CustomerInfo = () => {
   const ctx = useContext(StartServiceContext);
@@ -35,7 +38,9 @@ const CustomerInfo = () => {
   const [firstNameValidation, setFirstNameValidation] = useState({ error: "" });
   const [lastNameValidation, setLastNameValidation] = useState({ error: "" });
   const [ssnValidation, setSSNValidation] = useState({ error: "" });
-  const [primaryPhoneValidation, setPrimaryPhoneValidation] = useState({ error: "" });
+  const [primaryPhoneValidation, setPrimaryPhoneValidation] = useState({
+    error: "",
+  });
   const [emailValidation, setEmailValidation] = useState({ error: "" });
   const [stateValidation, setStateValidation] = useState({ error: "" });
   const [otherInfoValidation, setOtherInfoValidation] = useState({ error: "" });
@@ -53,23 +58,76 @@ const CustomerInfo = () => {
   };
 
   const validateForm = () => {
-    firstName ? setFirstNameValidation({ error: "" }) : setFirstNameValidation({ error: "First Name is required" });
-    lastName ? setLastNameValidation({ error: "" }) : setLastNameValidation({ error: "Last Name is required" });
-    ssn ? (ssn?.replace(/-/g, "").length === 9 ? setSSNValidation({ error: "" }) : setSSNValidation({ error: "SSN format is ***-**-****" })) : setSSNValidation({ error: "SSN is required" });
-    primaryPhone
-      ? primaryPhone?.replace(/-/g, "").length === 10
-        ? setPrimaryPhoneValidation({ error: "" })
-        : setPrimaryPhoneValidation({ error: "Primary Phone format is ***-***-****" })
-      : setPrimaryPhoneValidation({ error: "Primary Phone is required" });
-    email ? setEmailValidation({ error: "" }) : setEmailValidation({ error: "Email Address is required" });
-    otherInfo ? setOtherInfoValidation({ error: "" }) : setOtherInfoValidation({ error: "Other Info is required" });
-    comments ? setCommentValidation({ error: "" }) : setCommentValidation({ error: "Comments is required" });
+    let isValid = true;
+    if (!firstName) {
+      isValid = false;
+      setLastNameValidation({ error: "First Name is required" });
+    } else setLastNameValidation({ error: "" });
+
+    if (!lastName) {
+      isValid = false;
+      setLastNameValidation({ error: "Last Name is required" });
+    } else setFirstNameValidation({ error: "" });
+
+    if (!ssn) {
+      isValid = false;
+      setSSNValidation({ error: "SSN is required" });
+    } else {
+      if (ssn?.replace(/-/g, "").length !== 9) {
+        isValid = false;
+        setSSNValidation({ error: "SSN format is ***-**-****" });
+      } else setSSNValidation({ error: "" });
+    }
+
+    if (!primaryPhone) {
+      isValid = false;
+      setPrimaryPhoneValidation({ error: "Primary Phone is required" });
+    } else {
+      if (primaryPhone?.replace(/-/g, "").length !== 10) {
+        isValid = false;
+        setPrimaryPhoneValidation({
+          error: "Primary Phone format is ***-***-****",
+        });
+      } else setPrimaryPhoneValidation({ error: "" });
+    }
+
+    if (!email) {
+      isValid = false;
+      setEmailValidation({ error: "Email Address is required" });
+    } else {
+      const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (email.match(emailFormat)) {
+        setEmailValidation({ error: "" });
+      } else {
+        isValid = false;
+        setEmailValidation({ error: "Please use a valid email address" });
+      }
+    }
+
+    if (driversLicense && !driversLicenseState) {
+      isValid = false;
+      setStateValidation({ error: "Driver's License State is required" });
+    } else {
+      setStateValidation({ error: "" });
+    }
+
+    if (!otherInfo) {
+      isValid = false;
+      setOtherInfoValidation({ error: "Other Info is required" });
+    } else setOtherInfoValidation({ error: "" });
+
+    if (!comments) {
+      isValid = false;
+      setCommentValidation({ error: "Comments are required" });
+    } else setCommentValidation({ error: "" });
+
+    return isValid;
   };
 
   const customerInfoHandler = async (e) => {
     e.preventDefault();
-    validateForm();
-    if (firstNameValidation.error && lastNameValidation.error && ssnValidation.error && primaryPhoneValidation.error && emailValidation.error && otherInfoValidation.error && commentValidation.error) {
+
+    if (validateForm()) {
       const custInfo = {
         title,
         firstName,
@@ -79,8 +137,10 @@ const CustomerInfo = () => {
         ssn,
         primaryPhone,
         altPhone,
-        // eslint-disable-next-line no-undef
-        dob: dob ? moment(dob, "MM/DD/YYYY").format("YYYY-MM-DD") : "0001-01-01",
+        dob: dob
+          ? // eslint-disable-next-line no-undef
+            moment(dob, "MM/DD/YYYY").format("YYYY-MM-DD")
+          : "0001-01-01",
         ssnNotProvided,
         email,
         driversLicense,
@@ -106,30 +166,74 @@ const CustomerInfo = () => {
   };
 
   return (
-    <Accordion title="Customer Information" id="custInfo" open={ctx.openCustomerInfo} setOpen={ctx.setOpenCustomerInfo}>
+    <Accordion
+      title="Customer Information"
+      id="custInfo"
+      open={ctx.openCustomerInfo}
+      setOpen={ctx.setOpenCustomerInfo}
+    >
       {/* {customerInfoLoad && <Spinner />} */}
       <form onSubmit={customerInfoHandler}>
         <div className={classes.main}>
           <div className={classes.item_a}>
-            <Input label="Title" id="title" value={title} onChange={setTitle} />
+            <InputSelect
+              label="Title"
+              id="title"
+              value={title}
+              onChange={setTitle}
+              options={titleOptions}
+            />
           </div>
           <div className={classes.item_b}>
-            <Input label="First Name" id="firstName" required={true} value={firstName} onChange={setFirstName} error={firstNameValidation.error} />
+            <Input
+              label="First Name"
+              id="firstName"
+              required={true}
+              value={firstName}
+              onChange={setFirstName}
+              error={firstNameValidation.error}
+            />
           </div>
           <div className={classes.item_c}>
-            <Input label="Middle Name" id="middleName" value={middleName} onChange={setMiddleName} />
+            <Input
+              label="Middle Name"
+              id="middleName"
+              value={middleName}
+              onChange={setMiddleName}
+            />
           </div>
           <div className={classes.item_d}>
-            <Input label="Last Name" id="lastName" required={true} value={lastName} onChange={setLastName} error={lastNameValidation.error} />
+            <Input
+              label="Last Name"
+              id="lastName"
+              required={true}
+              value={lastName}
+              onChange={setLastName}
+              error={lastNameValidation.error}
+            />
           </div>
           <div className={classes.item_e}>
-            <Input label="Suffix" id="suffix" value={suffix} onChange={setSuffix} />
+            <InputSelect
+              label="Suffix"
+              id="suffix"
+              value={suffix}
+              onChange={setSuffix}
+              options={suffixOptions}
+            />
           </div>
           <div className={classes.item_x}>
             <ButtonCancel>Copy</ButtonCancel>
           </div>
           <div className={classes.item_f}>
-            <InputNumber label="SSN/TIN" id="ssntin" options={{ blocks: [3, 2, 4], delimiter: "-" }} required={true} value={ssn} onChange={setSSN} error={ssnValidation.error} />
+            <InputNumber
+              label="SSN/TIN"
+              id="ssntin"
+              options={{ blocks: [3, 2, 4], delimiter: "-" }}
+              required={true}
+              value={ssn}
+              onChange={setSSN}
+              error={ssnValidation.error}
+            />
           </div>
           <div className={classes.item_g}>
             <InputNumber
@@ -143,7 +247,13 @@ const CustomerInfo = () => {
             />
           </div>
           <div className={classes.item_h}>
-            <InputNumber label="Alternate Phone" id="altPhone" options={{ blocks: [3, 3, 4], delimiter: "-" }} value={altPhone} onChange={setAltPhone} />
+            <InputNumber
+              label="Alternate Phone"
+              id="altPhone"
+              options={{ blocks: [3, 3, 4], delimiter: "-" }}
+              value={altPhone}
+              onChange={setAltPhone}
+            />
           </div>
           <div className={classes.item_i}>
             <InputDatePicker
@@ -153,6 +263,7 @@ const CustomerInfo = () => {
                 setDob(date);
               }}
               value={dob}
+              changeYear={true}
             />
           </div>
           <div className={`${classes.item_j} checkbox`}>
@@ -168,13 +279,34 @@ const CustomerInfo = () => {
             <label htmlFor="ssnnotprovided">SSN/TIN not provided</label>
           </div>
           <div className={classes.item_k}>
-            <Input label="Email Address" id="email" required={true} value={email} onChange={setEmail} error={emailValidation.error} />
+            <Input
+              label="Email Address"
+              id="email"
+              required={true}
+              value={email}
+              onChange={setEmail}
+              error={emailValidation.error}
+            />
           </div>
           <div className={classes.item_l}>
-            <InputNumber label="Driver's License Number" id="driverslicense" options={{ blocks: [15] }} value={driversLicense} onChange={setDriversLicense} />
+            <InputNumber
+              label="Driver's License Number"
+              id="driverslicense"
+              options={{ blocks: [15] }}
+              value={driversLicense}
+              onChange={setDriversLicense}
+            />
           </div>
           <div className={classes.item_m}>
-            <Input label="State" id="state" required={true} value={driversLicenseState} onChange={setDriversLicenseState} error={stateValidation.error} />
+            <InputSelect
+              label="State"
+              id="state"
+              required={true}
+              value={driversLicenseState}
+              onChange={setDriversLicenseState}
+              error={stateValidation.error}
+              options={stateOptions}
+            />
           </div>
           <div className={`${classes.item_n} checkbox`}>
             <input
@@ -189,10 +321,24 @@ const CustomerInfo = () => {
             <label htmlFor="emailnotprovided">Email address not provided</label>
           </div>
           <div className={classes.item_o}>
-            <TextArea label="Other Customer Information" id="otherInfo" required={true} value={otherInfo} onChange={setOtherInfo} error={otherInfoValidation.error} />
+            <TextArea
+              label="Other Customer Information"
+              id="otherInfo"
+              required={true}
+              value={otherInfo}
+              onChange={setOtherInfo}
+              error={otherInfoValidation.error}
+            />
           </div>
           <div className={classes.item_p}>
-            <TextArea label="Comments" id="comments" required={true} value={comments} onChange={setComments} error={commentValidation.error} />
+            <TextArea
+              label="Comments"
+              id="comments"
+              required={true}
+              value={comments}
+              onChange={setComments}
+              error={commentValidation.error}
+            />
           </div>
           <div className={`${classes.item_q} btnGrp`}>
             <ButtonCancel type="Submit">Add Customer</ButtonCancel>

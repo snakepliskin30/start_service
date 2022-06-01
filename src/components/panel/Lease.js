@@ -12,12 +12,10 @@ import StartServiceContext from "../../store/StartServiceContext";
 
 function Lease() {
   const ctx = useContext(StartServiceContext);
-  const [streetNumber, setStreetNumber] = useState("");
-  const [streetName, setStreetName] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
-  const runCreditHandler = () => {};
+  const [incomingPhone, setIncomingPhone] = useState("");
+  const [callbackNum, setCallbackNum] = useState("");
+  const [reason, setReason] = useState("");
+  const [leaseEmailAddress, setLeaseEmailAddress] = useState("");
 
   const leaseNext = () => {
     ctx.setOpenLease(false);
@@ -29,7 +27,12 @@ function Lease() {
     ctx.setOpenDeposit(true);
   };
   return (
-    <Accordion title="Lease" id="lease" open={ctx.openLease} setOpen={ctx.setOpenLease}>
+    <Accordion
+      title="Lease"
+      id="lease"
+      open={ctx.openLease}
+      setOpen={ctx.setOpenLease}
+    >
       <div className={classes.main}>
         <div className={classes.lease_info}>
           <div className={`checkbox`}>
@@ -47,13 +50,35 @@ function Lease() {
         </div>
 
         <div className={classes.leaseForm}>
-          <InputNumber label="Incoming Phone Number" id="incomingPhoneNumber" options={{ blocks: [3, 3, 4], delimiter: "-" }} />
-          <InputNumber label="Callback Number" id="callbackNumber" options={{ blocks: [3, 3, 4], delimiter: "-" }} />
-          <Input label="Reason for Verification" id="depositAmount" value={streetName} onChange={setStreetName} />
+          <InputNumber
+            label="Incoming Phone Number"
+            id="incomingPhoneNumber"
+            options={{ blocks: [3, 3, 4], delimiter: "-" }}
+            value={incomingPhone}
+            onChange={setIncomingPhone}
+          />
+          <InputNumber
+            label="Callback Number"
+            id="callbackNumber"
+            options={{ blocks: [3, 3, 4], delimiter: "-" }}
+            value={callbackNum}
+            onChange={setCallbackNum}
+          />
+          <Input
+            label="Reason for Verification"
+            id="depositAmount"
+            value={reason}
+            onChange={setReason}
+          />
         </div>
         <div className={classes.leaseForm}>
-          <Input label="Email Address" id="leaseEmailAddress" />
-          <ButtonCancel>Cancel</ButtonCancel>
+          <Input
+            label="Email Address"
+            id="leaseEmailAddress"
+            value={leaseEmailAddress}
+            onChange={setLeaseEmailAddress}
+          />
+          <ButtonCancel>SEND EMAIL</ButtonCancel>
           <div></div>
         </div>
 

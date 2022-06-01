@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import Accordion from "../layout/Accordion";
 import Input from "../ui/Input";
-import InputNumber from "../ui/InputNumber";
+import InputSelect from "../ui/InputSelect";
 import ButtonCancel from "../ui/ButtonCancel";
 import ButtonSubmit from "../ui/ButtonSubmit";
 
@@ -9,16 +9,26 @@ import classes from "./RateOptions.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
 
+import { rateOptions as rateOptionList } from "../../lov/options";
+
 function Paperless() {
   const ctx = useContext(StartServiceContext);
-  const [streetNumber, setStreetNumber] = useState("");
-  const [streetName, setStreetName] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
+  const [rateOptions, setRateOptions] = useState("Residential");
+  const [rateOptionsValidation, setRateOptionsValidation] = useState({
+    error: "",
+  });
+
+  const validate = () => {
+    let isValid = true;
+    if (!rateOptions) {
+      isValid(false);
+      setRateOptionsValidation({ error: "Rate Option is required" });
+    } else setRateOptionsValidation({ error: "" });
+    return isValid;
+  };
 
   const rateNext = () => {
-    ctx.setOpenRateOptions(false);
+    if (validate()) ctx.setOpenRateOptions(false);
     ctx.setOpenFinalItems(true);
   };
 
@@ -27,10 +37,23 @@ function Paperless() {
     ctx.setOpenMailingAddress(true);
   };
   return (
-    <Accordion title="Rate Options" id="rateOptions" open={ctx.openRateOptions} setOpen={ctx.setOpenRateOptions}>
+    <Accordion
+      title="Rate Options"
+      id="rateOptions"
+      open={ctx.openRateOptions}
+      setOpen={ctx.setOpenRateOptions}
+    >
       <div className={classes.main}>
         <div className={classes.rateForm}>
-          <Input label="Rate Options" id="depositAmount" value={streetName} onChange={setStreetName} required={true} />
+          <InputSelect
+            label="Rate Options"
+            id="depositAmount"
+            value={rateOptions}
+            onChange={setRateOptions}
+            required={true}
+            options={rateOptionList}
+            error={rateOptionsValidation.error}
+          />
           <div></div>
           <div></div>
         </div>
