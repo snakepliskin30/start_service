@@ -1,8 +1,15 @@
+import React from "react";
 import "./App.css";
-import StartService from "./components/panel/StartService";
+const StartService = React.lazy(() =>
+  import("./components/panel/StartService")
+);
 
 function App() {
-  return <StartService />;
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <StartService />
+    </React.Suspense>
+  );
 }
 
 export default App;
