@@ -38,12 +38,12 @@ const PremiseInfo = (props) => {
 
   const searchFormHandler = async (e) => {
     e.preventDefault();
-    const result = await searchPremise(streetName, city, state, zip);
+    const result = await searchPremise(streetName, city, state, zip, ctx.osvcProfileId, ctx.osvcSessionToken, ctx.osvcInterfaceUrl, ctx.osvcLoginName);
     setPremiseResults(result);
   };
 
   const getPremiseDetailsHandler = async (premise) => {
-    const result = await getPremiseDetails(premise.premiseNo, premise.companyCode === "GPC" ? "2" : "5");
+    const result = await getPremiseDetails(premise.premiseNo, premise.companyCode === "GPC" ? "2" : "5", ctx.osvcProfileId, ctx.osvcSessionToken, ctx.osvcInterfaceUrl, ctx.osvcLoginName);
 
     const meterDetails = result.GetPremise.ServicePoints.find((i) => i.ServicePointType.code === "0200")?.Meters[0];
     const meterDetails_gm = result.GetPremiseMeters.Premise?.ServicePoint[0];
@@ -102,8 +102,7 @@ const PremiseInfo = (props) => {
               <Input label="State" id="state" value={state} onChange={setState} />
               <InputNumber label="Zip" id="zip" options={{ blocks: [5] }} value={zip} onChange={setZip} />
               <div className="btnGrp">
-                <ButtonSubmit>Submit</ButtonSubmit>
-                <ButtonCancel>Cancel</ButtonCancel>
+                <ButtonSubmit type="Submit">Submit</ButtonSubmit>
               </div>
             </form>
           )}

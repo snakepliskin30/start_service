@@ -1,13 +1,10 @@
-export const getPremiseMeters = async (premiseNo, companyCode) => {
-  const interfaceUrl =
-    "https://gpcservice--tst1.custhelp.com/cgi-bin/gpcservice.cfg";
-
+export const getPremiseMeters = async (premiseNo, profileId, token, interfaceUrl, userId) => {
   const Request = {};
   const Payload = {};
   const GetPremiseMeters = { premiseNo };
   const BaseRequest = {
     transactionId: "12345678",
-    userId: process.env.REACT_APP_OSVC_USER_ID,
+    userId: process.env.NODE_ENV === "production" ? userId : process.env.REACT_APP_OSVC_USER_ID,
   };
   Payload.BaseRequest = BaseRequest;
   Payload.GetPremiseMeters = GetPremiseMeters;
@@ -15,10 +12,7 @@ export const getPremiseMeters = async (premiseNo, companyCode) => {
   Request.Payload = Payload;
 
   const requestString = JSON.stringify(Request);
-  const url =
-    process.env.NODE_ENV === "production"
-      ? `${interfaceUrl}/php/custom/socoapicalls.php`
-      : process.env.REACT_APP_DEV_URL;
+  const url = process.env.NODE_ENV === "production" ? `${interfaceUrl}/php/custom/socoapicalls.php` : process.env.REACT_APP_DEV_URL;
   const formData = new FormData();
   formData.append("data", requestString);
   formData.append("apiUrl", "CUSTOM_CFG_SOCOMLP_GET_PREMISE_METERS");
@@ -27,8 +21,8 @@ export const getPremiseMeters = async (premiseNo, companyCode) => {
     method: "post",
     credentials: "same-origin",
     headers: {
-      P_SID: "",
-      P_ID: "",
+      P_SID: token,
+      P_ID: profileId,
     },
     body: formData,
   });

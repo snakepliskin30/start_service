@@ -127,6 +127,11 @@ const CustomerInfo = () => {
   const customerInfoHandler = async (e) => {
     e.preventDefault();
 
+    const profileId = ctx.osvcProfileId;
+    const token = ctx.osvcSessionToken;
+    const interfaceUrl = ctx.osvcInterfaceUrl;
+    const userId = ctx.osvcLoginName;
+
     if (validateForm()) {
       const custInfo = {
         title,
@@ -149,6 +154,10 @@ const CustomerInfo = () => {
         otherInfo,
         comments,
         fullName: getFullName(),
+        profileId,
+        token,
+        interfaceUrl,
+        userId,
       };
       addUpdateCustomer(custInfo);
     }
@@ -166,74 +175,30 @@ const CustomerInfo = () => {
   };
 
   return (
-    <Accordion
-      title="Customer Information"
-      id="custInfo"
-      open={ctx.openCustomerInfo}
-      setOpen={ctx.setOpenCustomerInfo}
-    >
+    <Accordion title="Customer Information" id="custInfo" open={ctx.openCustomerInfo} setOpen={ctx.setOpenCustomerInfo}>
       {/* {customerInfoLoad && <Spinner />} */}
       <form onSubmit={customerInfoHandler}>
         <div className={classes.main}>
           <div className={classes.item_a}>
-            <InputSelect
-              label="Title"
-              id="title"
-              value={title}
-              onChange={setTitle}
-              options={titleOptions}
-            />
+            <InputSelect label="Title" id="title" value={title} onChange={setTitle} options={titleOptions} />
           </div>
           <div className={classes.item_b}>
-            <Input
-              label="First Name"
-              id="firstName"
-              required={true}
-              value={firstName}
-              onChange={setFirstName}
-              error={firstNameValidation.error}
-            />
+            <Input label="First Name" id="firstName" required={true} value={firstName} onChange={setFirstName} error={firstNameValidation.error} />
           </div>
           <div className={classes.item_c}>
-            <Input
-              label="Middle Name"
-              id="middleName"
-              value={middleName}
-              onChange={setMiddleName}
-            />
+            <Input label="Middle Name" id="middleName" value={middleName} onChange={setMiddleName} />
           </div>
           <div className={classes.item_d}>
-            <Input
-              label="Last Name"
-              id="lastName"
-              required={true}
-              value={lastName}
-              onChange={setLastName}
-              error={lastNameValidation.error}
-            />
+            <Input label="Last Name" id="lastName" required={true} value={lastName} onChange={setLastName} error={lastNameValidation.error} />
           </div>
           <div className={classes.item_e}>
-            <InputSelect
-              label="Suffix"
-              id="suffix"
-              value={suffix}
-              onChange={setSuffix}
-              options={suffixOptions}
-            />
+            <InputSelect label="Suffix" id="suffix" value={suffix} onChange={setSuffix} options={suffixOptions} />
           </div>
           <div className={classes.item_x}>
             <ButtonCancel>Copy</ButtonCancel>
           </div>
           <div className={classes.item_f}>
-            <InputNumber
-              label="SSN/TIN"
-              id="ssntin"
-              options={{ blocks: [3, 2, 4], delimiter: "-" }}
-              required={true}
-              value={ssn}
-              onChange={setSSN}
-              error={ssnValidation.error}
-            />
+            <InputNumber label="SSN/TIN" id="ssntin" options={{ blocks: [3, 2, 4], delimiter: "-" }} required={true} value={ssn} onChange={setSSN} error={ssnValidation.error} />
           </div>
           <div className={classes.item_g}>
             <InputNumber
@@ -247,13 +212,7 @@ const CustomerInfo = () => {
             />
           </div>
           <div className={classes.item_h}>
-            <InputNumber
-              label="Alternate Phone"
-              id="altPhone"
-              options={{ blocks: [3, 3, 4], delimiter: "-" }}
-              value={altPhone}
-              onChange={setAltPhone}
-            />
+            <InputNumber label="Alternate Phone" id="altPhone" options={{ blocks: [3, 3, 4], delimiter: "-" }} value={altPhone} onChange={setAltPhone} />
           </div>
           <div className={classes.item_i}>
             <InputDatePicker
@@ -279,34 +238,13 @@ const CustomerInfo = () => {
             <label htmlFor="ssnnotprovided">SSN/TIN not provided</label>
           </div>
           <div className={classes.item_k}>
-            <Input
-              label="Email Address"
-              id="email"
-              required={true}
-              value={email}
-              onChange={setEmail}
-              error={emailValidation.error}
-            />
+            <Input label="Email Address" id="email" required={true} value={email} onChange={setEmail} error={emailValidation.error} />
           </div>
           <div className={classes.item_l}>
-            <InputNumber
-              label="Driver's License Number"
-              id="driverslicense"
-              options={{ blocks: [15] }}
-              value={driversLicense}
-              onChange={setDriversLicense}
-            />
+            <InputNumber label="Driver's License Number" id="driverslicense" options={{ blocks: [15] }} value={driversLicense} onChange={setDriversLicense} />
           </div>
           <div className={classes.item_m}>
-            <InputSelect
-              label="State"
-              id="state"
-              required={true}
-              value={driversLicenseState}
-              onChange={setDriversLicenseState}
-              error={stateValidation.error}
-              options={stateOptions}
-            />
+            <InputSelect label="State" id="state" required={true} value={driversLicenseState} onChange={setDriversLicenseState} error={stateValidation.error} options={stateOptions} />
           </div>
           <div className={`${classes.item_n} checkbox`}>
             <input
@@ -321,24 +259,10 @@ const CustomerInfo = () => {
             <label htmlFor="emailnotprovided">Email address not provided</label>
           </div>
           <div className={classes.item_o}>
-            <TextArea
-              label="Other Customer Information"
-              id="otherInfo"
-              required={true}
-              value={otherInfo}
-              onChange={setOtherInfo}
-              error={otherInfoValidation.error}
-            />
+            <TextArea label="Other Customer Information" id="otherInfo" required={true} value={otherInfo} onChange={setOtherInfo} error={otherInfoValidation.error} />
           </div>
           <div className={classes.item_p}>
-            <TextArea
-              label="Comments"
-              id="comments"
-              required={true}
-              value={comments}
-              onChange={setComments}
-              error={commentValidation.error}
-            />
+            <TextArea label="Comments" id="comments" required={true} value={comments} onChange={setComments} error={commentValidation.error} />
           </div>
           <div className={`${classes.item_q} btnGrp`}>
             <ButtonCancel type="Submit">Add Customer</ButtonCancel>
