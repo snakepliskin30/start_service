@@ -8,6 +8,7 @@ import ButtonSubmit from "../ui/ButtonSubmit";
 import classes from "./Paperless.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
+import useAccordionPanelStore from "../../store/AccordionPanelStore";
 
 import {
   paperlessActionOptions,
@@ -17,6 +18,14 @@ import InputSelect from "../ui/InputSelect";
 
 function Paperless() {
   const ctx = useContext(StartServiceContext);
+  const openPaperless = useAccordionPanelStore((state) => state.openPaperless);
+  const setOpenPaperless = useAccordionPanelStore(
+    (state) => state.setOpenPaperless
+  );
+  const setOpenMailingAddress = useAccordionPanelStore(
+    (state) => state.setOpenMailingAddress
+  );
+  const setOpenLease = useAccordionPanelStore((state) => state.setOpenLease);
   const [paperlessAction, setPaperlessAction] = useState("");
   const [paperlessEmail, setPaperlessEmail] = useState("");
   const [daysBeforeDue, setDaysBeforeDue] = useState("");
@@ -31,14 +40,14 @@ function Paperless() {
 
   const paperlessNext = () => {
     if (validate()) {
-      ctx.setOpenPaperless(false);
-      ctx.setOpenMailingAddress(true);
+      setOpenPaperless(false);
+      setOpenMailingAddress(true);
     }
   };
 
   const paperlessPrevious = () => {
-    ctx.setOpenPaperless(false);
-    ctx.setOpenLease(true);
+    setOpenPaperless(false);
+    setOpenLease(true);
   };
 
   const validate = () => {
@@ -80,8 +89,8 @@ function Paperless() {
     <Accordion
       title="Paperless Billing"
       id="paperlessBilling"
-      open={ctx.openPaperless}
-      setOpen={ctx.setOpenPaperless}
+      open={openPaperless}
+      setOpen={setOpenPaperless}
     >
       <div className={classes.main}>
         <div className={classes.paperlessForm}>

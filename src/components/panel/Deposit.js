@@ -10,30 +10,39 @@ import ButtonSubmit from "../ui/ButtonSubmit";
 import classes from "./Deposit.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
+import useAccordionPanelStore from "../../store/AccordionPanelStore";
 
 import { depositActionOptions } from "../../lov/options";
 
 function Deposit() {
   const ctx = useContext(StartServiceContext);
+  const openDeposit = useAccordionPanelStore((state) => state.openDeposit);
+  const setOpenDeposit = useAccordionPanelStore(
+    (state) => state.setOpenDeposit
+  );
+  const setOpenLease = useAccordionPanelStore((state) => state.setOpenLease);
+  const setOpenCreditCheck = useAccordionPanelStore(
+    (state) => state.setOpenCreditCheck
+  );
   const [depositAction, setDepositAction] = useState("");
   const [depositAmount, setDepositAmount] = useState("0.00");
   const [aveMonthlyBill, setAveMonthlyBill] = useState("");
 
   const depositNext = () => {
-    ctx.setOpenDeposit(false);
-    ctx.setOpenLease(true);
+    setOpenDeposit(false);
+    setOpenLease(true);
   };
 
   const depositPrevious = () => {
-    ctx.setOpenDeposit(false);
-    ctx.setOpenCreditCheck(true);
+    setOpenDeposit(false);
+    setOpenCreditCheck(true);
   };
   return (
     <Accordion
       title="Deposit"
       id="deposit"
-      open={ctx.openDeposit}
-      setOpen={ctx.setOpenDeposit}
+      open={openDeposit}
+      setOpen={setOpenDeposit}
     >
       <div className={classes.main}>
         <div className={classes.deposit_info}>

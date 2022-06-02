@@ -6,10 +6,13 @@ const Accordion = (props) => {
   const headerId = `accordion-header-${props.id}`;
 
   const clickHeaderHandler = () => {
-    props.setOpen((current) => !current);
+    // props.setOpen((current) => !current); // if using standard usestate from parent
+    props.setOpen(!props.open); // if using zustand state management
   };
 
-  const iconPosition = props.open ? `${classes.header} ${classes.pointdown} ${headerId}` : `${classes.header} ${headerId}`;
+  const iconPosition = props.open
+    ? `${classes.header} ${classes.pointdown} ${headerId}`
+    : `${classes.header} ${headerId}`;
 
   return (
     <div className={classes.accordion}>

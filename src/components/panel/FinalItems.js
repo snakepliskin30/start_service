@@ -9,9 +9,39 @@ import ButtonSubmit from "../ui/ButtonSubmit";
 import classes from "./FinalItems.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
+import useAccordionPanelStore from "../../store/AccordionPanelStore";
 
 function FinalItems() {
   const ctx = useContext(StartServiceContext);
+  const openFinalItems = useAccordionPanelStore(
+    (state) => state.openFinalItems
+  );
+  const setOpenFinalItems = useAccordionPanelStore(
+    (state) => state.setOpenFinalItems
+  );
+  const setOpenRateOptions = useAccordionPanelStore(
+    (state) => state.setOpenRateOptions
+  );
+
+  const setOpenPremise = useAccordionPanelStore(
+    (state) => state.setOpenPremise
+  );
+  const setOpenCustomerInfo = useAccordionPanelStore(
+    (state) => state.setOpenCustomerInfo
+  );
+  const setOpenCreditCheck = useAccordionPanelStore(
+    (state) => state.setOpenCreditCheck
+  );
+  const setOpenDeposit = useAccordionPanelStore(
+    (state) => state.setOpenDeposit
+  );
+  const setOpenLease = useAccordionPanelStore((state) => state.setOpenLease);
+  const setOpenPaperless = useAccordionPanelStore(
+    (state) => state.setOpenPaperless
+  );
+  const setOpenMailingAddress = useAccordionPanelStore(
+    (state) => state.setOpenMailingAddress
+  );
   const [streetNumber, setStreetNumber] = useState("");
   const [streetName, setStreetName] = useState("");
   const [city, setCity] = useState("");
@@ -21,23 +51,28 @@ function FinalItems() {
   const runCreditHandler = () => {};
 
   const openAll = () => {
-    ctx.setOpenPremise(true);
-    ctx.setOpenCustomerInfo(true);
-    ctx.setOpenCreditCheck(true);
-    ctx.setOpenDeposit(true);
-    ctx.setOpenLease(true);
-    ctx.setOpenPaperless(true);
-    ctx.setOpenMailingAddress(true);
-    ctx.setOpenRateOptions(true);
-    ctx.setOpenFinalItems(true);
+    setOpenPremise(true);
+    setOpenCustomerInfo(true);
+    setOpenCreditCheck(true);
+    setOpenDeposit(true);
+    setOpenLease(true);
+    setOpenPaperless(true);
+    setOpenMailingAddress(true);
+    setOpenRateOptions(true);
+    setOpenFinalItems(true);
   };
 
   const finalItemPrevious = () => {
-    ctx.setOpenFinalItems(false);
-    ctx.setOpenRateOptions(true);
+    setOpenFinalItems(false);
+    setOpenRateOptions(true);
   };
   return (
-    <Accordion title="Final Items" id="finalItems" open={ctx.openFinalItems} setOpen={ctx.setOpenFinalItems}>
+    <Accordion
+      title="Final Items"
+      id="finalItems"
+      open={openFinalItems}
+      setOpen={setOpenFinalItems}
+    >
       <div className={classes.main}>
         <div className={classes.finalItemForm}>
           <InputDatePicker

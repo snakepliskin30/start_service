@@ -8,11 +8,24 @@ import ButtonSubmit from "../ui/ButtonSubmit";
 import classes from "./RateOptions.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
+import useAccordionPanelStore from "../../store/AccordionPanelStore";
 
 import { rateOptions as rateOptionList } from "../../lov/options";
 
 function Paperless() {
   const ctx = useContext(StartServiceContext);
+  const openRateOptions = useAccordionPanelStore(
+    (state) => state.openRateOptions
+  );
+  const setOpenRateOptions = useAccordionPanelStore(
+    (state) => state.setOpenRateOptions
+  );
+  const setOpenFinalItems = useAccordionPanelStore(
+    (state) => state.setOpenFinalItems
+  );
+  const setOpenMailingAddress = useAccordionPanelStore(
+    (state) => state.setOpenMailingAddress
+  );
   const [rateOptions, setRateOptions] = useState("Residential");
   const [rateOptionsValidation, setRateOptionsValidation] = useState({
     error: "",
@@ -28,20 +41,20 @@ function Paperless() {
   };
 
   const rateNext = () => {
-    if (validate()) ctx.setOpenRateOptions(false);
-    ctx.setOpenFinalItems(true);
+    if (validate()) setOpenRateOptions(false);
+    setOpenFinalItems(true);
   };
 
   const ratePrevious = () => {
-    ctx.setOpenRateOptions(false);
-    ctx.setOpenMailingAddress(true);
+    setOpenRateOptions(false);
+    setOpenMailingAddress(true);
   };
   return (
     <Accordion
       title="Rate Options"
       id="rateOptions"
-      open={ctx.openRateOptions}
-      setOpen={ctx.setOpenRateOptions}
+      open={openRateOptions}
+      setOpen={setOpenRateOptions}
     >
       <div className={classes.main}>
         <div className={classes.rateForm}>

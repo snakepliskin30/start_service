@@ -10,9 +10,22 @@ import ButtonSubmit from "../ui/ButtonSubmit";
 import classes from "./CreditCheck.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
+import useAccordionPanelStore from "../../store/AccordionPanelStore";
 
 function CreditCheck() {
   const ctx = useContext(StartServiceContext);
+  const openCreditCheck = useAccordionPanelStore(
+    (state) => state.openCreditCheck
+  );
+  const setOpenCreditCheck = useAccordionPanelStore(
+    (state) => state.setOpenCreditCheck
+  );
+  const setOpenDeposit = useAccordionPanelStore(
+    (state) => state.setOpenDeposit
+  );
+  const setOpenCustomerInfo = useAccordionPanelStore(
+    (state) => state.setOpenCustomerInfo
+  );
   const [streetNumber, setStreetNumber] = useState("");
   const [streetName, setStreetName] = useState("");
   const [city, setCity] = useState("");
@@ -21,16 +34,21 @@ function CreditCheck() {
   const runCreditHandler = () => {};
 
   const creditNext = () => {
-    ctx.setOpenCreditCheck(false);
-    ctx.setOpenDeposit(true);
+    setOpenCreditCheck(false);
+    setOpenDeposit(true);
   };
 
   const creditPrevious = () => {
-    ctx.setOpenCreditCheck(false);
-    ctx.setOpenCustomerInfo(true);
+    setOpenCreditCheck(false);
+    setOpenCustomerInfo(true);
   };
   return (
-    <Accordion title="Credit Assessment" id="creditAssessment" open={ctx.openCreditCheck} setOpen={ctx.setOpenCreditCheck}>
+    <Accordion
+      title="Credit Assessment"
+      id="creditAssessment"
+      open={openCreditCheck}
+      setOpen={setOpenCreditCheck}
+    >
       <div className={classes.main}>
         <div className={classes.credit_info}>
           <Field label="Decision" value="Pass"></Field>
@@ -39,11 +57,27 @@ function CreditCheck() {
 
         <Section title="Credit Assessment" open={true} noBtn>
           <form className={classes.creditForm} onSubmit={runCreditHandler}>
-            <Input label="Street Number" id="streetNumber" value={streetNumber} onChange={setStreetNumber} />
-            <Input label="Street Name" id="streetName" value={streetName} onChange={setStreetName} />
+            <Input
+              label="Street Number"
+              id="streetNumber"
+              value={streetNumber}
+              onChange={setStreetNumber}
+            />
+            <Input
+              label="Street Name"
+              id="streetName"
+              value={streetName}
+              onChange={setStreetName}
+            />
             <Input label="City" id="city" value={city} onChange={setCity} />
             <Input label="State" id="state" value={state} onChange={setState} />
-            <InputNumber label="Zip" id="zip" options={{ blocks: [5] }} value={zip} onChange={setZip} />
+            <InputNumber
+              label="Zip"
+              id="zip"
+              options={{ blocks: [5] }}
+              value={zip}
+              onChange={setZip}
+            />
             <div className="btnGrp">
               <ButtonCancel type="Submit">Run Credit</ButtonCancel>
             </div>

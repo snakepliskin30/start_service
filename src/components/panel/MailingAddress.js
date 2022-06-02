@@ -9,11 +9,24 @@ import ButtonSubmit from "../ui/ButtonSubmit";
 import classes from "./MailingAddress.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
+import useAccordionPanelStore from "../../store/AccordionPanelStore";
 
 import { stateOptions } from "../../lov/options";
 
 function MailingAddress() {
   const ctx = useContext(StartServiceContext);
+  const openMailingAddress = useAccordionPanelStore(
+    (state) => state.openMailingAddress
+  );
+  const setOpenMailingAddress = useAccordionPanelStore(
+    (state) => state.setOpenMailingAddress
+  );
+  const setOpenRateOptions = useAccordionPanelStore(
+    (state) => state.setOpenRateOptions
+  );
+  const setOpenPaperless = useAccordionPanelStore(
+    (state) => state.setOpenPaperless
+  );
   const [addressLine1, setAddressLine1] = useState("");
   const [addressLine2, setAddressLine2] = useState("");
   const [city, setCity] = useState("");
@@ -22,20 +35,20 @@ function MailingAddress() {
   const runCreditHandler = () => {};
 
   const mailingNext = () => {
-    ctx.setOpenMailingAddress(false);
-    ctx.setOpenRateOptions(true);
+    setOpenMailingAddress(false);
+    setOpenRateOptions(true);
   };
 
   const mailingPrevious = () => {
-    ctx.setOpenMailingAddress(false);
-    ctx.setOpenPaperless(true);
+    setOpenMailingAddress(false);
+    setOpenPaperless(true);
   };
   return (
     <Accordion
       title="Mailing Address"
       id="mailingAddress"
-      open={ctx.openMailingAddress}
-      setOpen={ctx.setOpenMailingAddress}
+      open={openMailingAddress}
+      setOpen={setOpenMailingAddress}
     >
       <div className={classes.main}>
         <div className={classes.mailing_info}>
