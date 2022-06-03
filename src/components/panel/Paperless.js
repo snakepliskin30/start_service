@@ -9,26 +9,30 @@ import classes from "./Paperless.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
 import useAccordionPanelStore from "../../store/AccordionPanelStore";
+import usePaperlessStore from "../../store/PaperlessStore";
 
-import {
-  paperlessActionOptions,
-  paperlessDaysBeforeDueDateOptions,
-} from "../../lov/options";
+import { paperlessActionOptions, paperlessDaysBeforeDueDateOptions } from "../../lov/options";
 import InputSelect from "../ui/InputSelect";
 
 function Paperless() {
   const ctx = useContext(StartServiceContext);
   const openPaperless = useAccordionPanelStore((state) => state.openPaperless);
-  const setOpenPaperless = useAccordionPanelStore(
-    (state) => state.setOpenPaperless
-  );
-  const setOpenMailingAddress = useAccordionPanelStore(
-    (state) => state.setOpenMailingAddress
-  );
+  const setOpenPaperless = useAccordionPanelStore((state) => state.setOpenPaperless);
+  const setOpenMailingAddress = useAccordionPanelStore((state) => state.setOpenMailingAddress);
   const setOpenLease = useAccordionPanelStore((state) => state.setOpenLease);
-  const [paperlessAction, setPaperlessAction] = useState("");
-  const [paperlessEmail, setPaperlessEmail] = useState("");
-  const [daysBeforeDue, setDaysBeforeDue] = useState("");
+
+  const paperlessAction = usePaperlessStore((state) => state.paperlessAction);
+  const paperlessEmail = usePaperlessStore((state) => state.paperlessEmail);
+  const paperlessDaysBeforeDue = usePaperlessStore((state) => state.paperlessDaysBeforeDue);
+  const paperlessReminderEmail = usePaperlessStore((state) => state.paperlessReminderEmail);
+  const setPaperlessAction = usePaperlessStore((state) => state.setPaperlessAction);
+  const setPaperlessEmail = usePaperlessStore((state) => state.setPaperlessEmail);
+  const setPaperlessDaysBeforeDue = usePaperlessStore((state) => state.setPaperlessDaysBeforeDue);
+  const setPaperlessReminderEmail = usePaperlessStore((state) => state.setPaperlessReminderEmail);
+
+  // const [paperlessAction, setPaperlessAction] = useState("");
+  // const [paperlessEmail, setPaperlessEmail] = useState("");
+  // const [daysBeforeDue, setDaysBeforeDue] = useState("");
   const [emailRequired, setEmailRequired] = useState(false);
   const [paperlessActionValidation, setPaperlessActionValidation] = useState({
     error: "",
@@ -58,11 +62,7 @@ function Paperless() {
       setPaperlessActionValidation({ error: "Paperless Action is required" });
       setPaperlessEmailValidation({ error: "" });
     } else {
-      if (
-        (paperlessAction === "Enroll in Paperless" ||
-          paperlessAction === "Send Paperless Info") &&
-        !paperlessEmail
-      ) {
+      if ((paperlessAction === "Enroll in Paperless" || paperlessAction === "Send Paperless Info") && !paperlessEmail) {
         valid = false;
         setPaperlessEmailValidation({ error: "Email Address is required" });
       } else {
@@ -73,65 +73,48 @@ function Paperless() {
     return valid;
   };
 
-  useEffect(() => {
-    if (
-      paperlessAction === "Enroll in Paperless" ||
-      paperlessAction === "Send Paperless Info"
-    )
-      setEmailRequired(true);
-    else {
-      setEmailRequired(false);
-      setPaperlessEmailValidation({ error: "" });
-    }
-  }, [paperlessAction]);
+  // useEffect(() => {
+  //   if (paperlessAction === "Enroll in Paperless" || paperlessAction === "Send Paperless Info") setEmailRequired(true);
+  //   else {
+  //     setEmailRequired(false);
+  //     setPaperlessEmailValidation({ error: "" });
+  //   }
+  // }, [paperlessAction]);
 
   return (
-    <Accordion
-      title="Paperless Billing"
-      id="paperlessBilling"
-      open={openPaperless}
-      setOpen={setOpenPaperless}
-    >
+    <Accordion title="Paperless Billing" id="paperlessBilling" open={openPaperless} setOpen={setOpenPaperless}>
       <div className={classes.main}>
         <div className={classes.paperlessForm}>
           <InputSelect
             label="Paperless Action"
             id="paperlessAction"
             value={paperlessAction}
-            onChange={setPaperlessAction}
+            onChange={(val) => {
+              if (val === "Enroll in Paperless" || val === "Send Paperless Info") setEmailRequired(true);
+              else {
+                setEmailRequired(false);
+                setPaperlessEmailValidation({ error: "" });
+              }
+              setPaperlessAction(val);
+            }}
             required={true}
             error={paperlessActionValidation.error}
             options={paperlessActionOptions}
           />
-          <Input
-            label="Email Address"
-            id="paperlessEmailAddress"
-            value={paperlessEmail}
-            onChange={setPaperlessEmail}
-            required={emailRequired}
-            error={paperlessEmailValidation.error}
-          />
-          <Input
-            label="Days Before Due Date"
-            id="paperlessDaysBeforeDue"
-            value={daysBeforeDue}
-            onChange={setDaysBeforeDue}
-          />
+          <Input label="Email Address" id="paperlessEmailAddress" value={paperlessEmail} onChange={setPaperlessEmail} required={emailRequired} error={paperlessEmailValidation.error} />
+          <Input label="Days Before Due Date" id="paperlessDaysBeforeDue" value={paperlessDaysBeforeDue} onChange={setPaperlessDaysBeforeDue} />
         </div>
-        <div
-          className={classes.paperless_info}
-          style={{ justifyContent: "center" }}
-        >
+        <div className={classes.paperless_info} style={{ justifyContent: "center" }}>
           <div></div>
           <div className={`checkbox`}>
             <input
               type="checkbox"
               id="paperlessReminderEmail"
               name="paperlessReminderEmail"
-              value={false}
-              //   onChange={(e) => {
-              //     setEmailNotProvided(e.target.checked);
-              //   }}
+              value={paperlessReminderEmail}
+              onChange={(e) => {
+                setPaperlessReminderEmail(e.target.checked);
+              }}
             />
             <label htmlFor="paperlessReminderEmail">Reminder Email</label>
           </div>

@@ -9,21 +9,30 @@ import classes from "./Lease.module.css";
 
 import StartServiceContext from "../../store/StartServiceContext";
 import useAccordionPanelStore from "../../store/AccordionPanelStore";
+import useLeaseStore from "../../store/LeaseStore";
 
 function Lease() {
   const ctx = useContext(StartServiceContext);
   const openLease = useAccordionPanelStore((state) => state.openLease);
   const setOpenLease = useAccordionPanelStore((state) => state.setOpenLease);
-  const setOpenPaperless = useAccordionPanelStore(
-    (state) => state.setOpenPaperless
-  );
-  const setOpenDeposit = useAccordionPanelStore(
-    (state) => state.setOpenDeposit
-  );
-  const [incomingPhone, setIncomingPhone] = useState("");
-  const [callbackNum, setCallbackNum] = useState("");
-  const [reason, setReason] = useState("");
-  const [leaseEmailAddress, setLeaseEmailAddress] = useState("");
+  const setOpenPaperless = useAccordionPanelStore((state) => state.setOpenPaperless);
+  const setOpenDeposit = useAccordionPanelStore((state) => state.setOpenDeposit);
+
+  const leaseIdHold = useLeaseStore((state) => state.leaseIdHold);
+  const leaseIncomingNumber = useLeaseStore((state) => state.leaseIncomingNumber);
+  const leaseCallbackNumber = useLeaseStore((state) => state.leaseCallbackNumber);
+  const leaseReason = useLeaseStore((state) => state.leaseReason);
+  const leaseEmail = useLeaseStore((state) => state.leaseEmail);
+  const setLeaseIdHold = useLeaseStore((state) => state.setLeaseIdHold);
+  const setLeaseIncomingNumber = useLeaseStore((state) => state.setLeaseIncomingNumber);
+  const setLeaseCallbackNumber = useLeaseStore((state) => state.setLeaseCallbackNumber);
+  const setLeaseReason = useLeaseStore((state) => state.setLeaseReason);
+  const setLeaseEmail = useLeaseStore((state) => state.setLeaseEmail);
+
+  // const [incomingPhone, setIncomingPhone] = useState("");
+  // const [callbackNum, setCallbackNum] = useState("");
+  // const [reason, setReason] = useState("");
+  // const [leaseEmailAddress, setLeaseEmailAddress] = useState("");
 
   const leaseNext = () => {
     setOpenLease(false);
@@ -43,44 +52,22 @@ function Lease() {
               type="checkbox"
               id="leaseHold"
               name="leaseHold"
-              value={false}
-              //   onChange={(e) => {
-              //     setEmailNotProvided(e.target.checked);
-              //   }}
+              value={leaseIdHold}
+              onChange={(e) => {
+                setLeaseIdHold(e.target.checked);
+              }}
             />
             <label htmlFor="leaseHold">Lease/ID Hold</label>
           </div>
         </div>
 
         <div className={classes.leaseForm}>
-          <InputNumber
-            label="Incoming Phone Number"
-            id="incomingPhoneNumber"
-            options={{ blocks: [3, 3, 4], delimiter: "-" }}
-            value={incomingPhone}
-            onChange={setIncomingPhone}
-          />
-          <InputNumber
-            label="Callback Number"
-            id="callbackNumber"
-            options={{ blocks: [3, 3, 4], delimiter: "-" }}
-            value={callbackNum}
-            onChange={setCallbackNum}
-          />
-          <Input
-            label="Reason for Verification"
-            id="depositAmount"
-            value={reason}
-            onChange={setReason}
-          />
+          <InputNumber label="Incoming Phone Number" id="incomingPhoneNumber" options={{ blocks: [3, 3, 4], delimiter: "-" }} value={leaseIncomingNumber} onChange={setLeaseIncomingNumber} />
+          <InputNumber label="Callback Number" id="callbackNumber" options={{ blocks: [3, 3, 4], delimiter: "-" }} value={leaseCallbackNumber} onChange={setLeaseCallbackNumber} />
+          <Input label="Reason for Verification" id="depositAmount" value={leaseReason} onChange={setLeaseReason} />
         </div>
         <div className={classes.leaseForm}>
-          <Input
-            label="Email Address"
-            id="leaseEmailAddress"
-            value={leaseEmailAddress}
-            onChange={setLeaseEmailAddress}
-          />
+          <Input label="Email Address" id="leaseEmailAddress" value={leaseEmail} onChange={setLeaseEmail} />
           <ButtonCancel>SEND EMAIL</ButtonCancel>
           <div></div>
         </div>
