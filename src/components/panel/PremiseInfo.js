@@ -1,4 +1,10 @@
-import React, { Fragment, useEffect, useState, useCallback, useContext } from "react";
+import React, {
+  Fragment,
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+} from "react";
 import useSearchPremise from "../../hooks/useSearchPremise";
 import usePremiseDetails from "../../hooks/usePremiseDetails";
 import Accordion from "../layout/Accordion";
@@ -26,9 +32,15 @@ import usePremiseInfoStore from "../../store/PremiseInfoStore";
 const PremiseInfo = (props) => {
   const ctx = useContext(StartServiceContext);
   const openPremise = useAccordionPanelStore((state) => state.openPremise);
-  const setOpenPremise = useAccordionPanelStore((state) => state.setOpenPremise);
-  const setOpenCustomerInfo = useAccordionPanelStore((state) => state.setOpenCustomerInfo);
-  const setSelectedPremiseInfo = usePremiseInfoStore((state) => state.setSelectedPremiseInfo);
+  const setOpenPremise = useAccordionPanelStore(
+    (state) => state.setOpenPremise
+  );
+  const setOpenCustomerInfo = useAccordionPanelStore(
+    (state) => state.setOpenCustomerInfo
+  );
+  const setSelectedPremiseInfo = usePremiseInfoStore(
+    (state) => state.setSelectedPremiseInfo
+  );
 
   const [streetName, setStreetName] = useState("");
   const [city, setCity] = useState("");
@@ -45,18 +57,38 @@ const PremiseInfo = (props) => {
 
   const searchFormHandler = async (e) => {
     e.preventDefault();
-    const result = await searchPremise(streetName, city, state, zip, ctx.osvcProfileId, ctx.osvcSessionToken, ctx.osvcInterfaceUrl, ctx.osvcLoginName);
+    const result = await searchPremise(
+      streetName,
+      city,
+      state,
+      zip,
+      ctx.osvcProfileId,
+      ctx.osvcSessionToken,
+      ctx.osvcInterfaceUrl,
+      ctx.osvcLoginName
+    );
     setPremiseResults(result);
   };
 
   const getPremiseDetailsHandler = async (premise) => {
-    const result = await getPremiseDetails(premise.premiseNo, premise.companyCode === "GPC" ? "2" : "5", ctx.osvcProfileId, ctx.osvcSessionToken, ctx.osvcInterfaceUrl, ctx.osvcLoginName);
+    const result = await getPremiseDetails(
+      premise.premiseNo,
+      premise.companyCode === "GPC" ? "2" : "5",
+      ctx.osvcProfileId,
+      ctx.osvcSessionToken,
+      ctx.osvcInterfaceUrl,
+      ctx.osvcLoginName
+    );
 
-    const svcPoint = result.GetPremise.ServicePoints.find((i) => i.ServicePointType.code === "0200");
+    const svcPoint = result.GetPremise.ServicePoints.find(
+      (i) => i.ServicePointType.code === "0200"
+    );
     const servicePointNumber = svcPoint.servicePointNumber;
     const tariffSchedCode = svcPoint?.TariffSchedule.code;
     const meterDetails = svcPoint?.Meters[0];
-    const meterDetails_gm = result.GetPremiseMeters.Premise?.ServicePoint.find((i) => i.servicePointNumber === servicePointNumber);
+    const meterDetails_gm = result.GetPremiseMeters.Premise?.ServicePoint.find(
+      (i) => i.servicePointNumber === servicePointNumber
+    );
     const premiseInfo = {
       meterPointStatus: meterDetails.MeterStatus.code,
       meterStatus: meterDetails.MeterStatus.code,
@@ -73,6 +105,10 @@ const PremiseInfo = (props) => {
       meterNumber: meterDetails_gm?.Meter[0]?.meterNumber,
       meterPointLocationCode: meterDetails_gm?.Meter[0]?.meterPointNumber,
       companyCode: premise.companyCode.toLowerCase() === "gpc" ? "2" : "5",
+      fullAddress: premise.address
+        .replace(",", " ")
+        .replace(/\s+/g, " ")
+        .trim(),
     };
     setPremiseDetails(premiseInfo);
     setSelectedPremiseInfo(premiseInfo);
@@ -109,16 +145,37 @@ const PremiseInfo = (props) => {
   };
 
   return (
-    <Accordion title="Premise Address" id="premiseinfo" open={openPremise} setOpen={setOpenPremise}>
+    <Accordion
+      title="Premise Address"
+      id="premiseinfo"
+      open={openPremise}
+      setOpen={setOpenPremise}
+    >
       {(premiseSearchLoad || premiseDetailsLoad) && <Spinner />}
       <div className={classes.main}>
         <Section title="Search" onClick={searchFormSectionClick}>
           {searchFormShow && (
             <form className={classes.searchForm} onSubmit={searchFormHandler}>
-              <Input label="Street Name" id="streetName" value={streetName} onChange={setStreetName} />
+              <Input
+                label="Street Name"
+                id="streetName"
+                value={streetName}
+                onChange={setStreetName}
+              />
               <Input label="City" id="city" value={city} onChange={setCity} />
-              <Input label="State" id="state" value={state} onChange={setState} />
-              <InputNumber label="Zip" id="zip" options={{ blocks: [5] }} value={zip} onChange={setZip} />
+              <Input
+                label="State"
+                id="state"
+                value={state}
+                onChange={setState}
+              />
+              <InputNumber
+                label="Zip"
+                id="zip"
+                options={{ blocks: [5] }}
+                value={zip}
+                onChange={setZip}
+              />
               <div className="btnGrp">
                 <ButtonSubmit type="Submit">Submit</ButtonSubmit>
               </div>
@@ -140,7 +197,11 @@ const PremiseInfo = (props) => {
               </thead>
               <tbody>
                 {premiseResults.map((premise, index) => (
-                  <tr key={index} className={classes.resultsrow} onClick={getPremiseDetailsHandler.bind(null, premise)}>
+                  <tr
+                    key={index}
+                    className={classes.resultsrow}
+                    onClick={getPremiseDetailsHandler.bind(null, premise)}
+                  >
                     <td>{premise.addressLine1}</td>
                     <td>{premise.AddressNotes}</td>
                     <td>{premise.city}</td>
@@ -163,18 +224,41 @@ const PremiseInfo = (props) => {
                     gridTemplateColumns: "repeat(2, 1fr)",
                   }}
                 >
-                  <Field label="Premise Address" value={premiseDetails.detail1 + "\n" + premiseDetails.detail2}></Field>
-                  <Field label="Address Notes" value={premiseDetails.addressNotes}></Field>
+                  <Field
+                    label="Premise Address"
+                    value={
+                      premiseDetails.detail1 + "\n" + premiseDetails.detail2
+                    }
+                  ></Field>
+                  <Field
+                    label="Address Notes"
+                    value={premiseDetails.addressNotes}
+                  ></Field>
                 </div>
                 <div></div>
                 <Section title="Details" open={true} noBtn>
                   <div className={classes.premiseInfoDetails}>
-                    <Field label="Meter Point Status" value={premiseDetails.meterPointStatus}></Field>
-                    <Field label="Meter Status" value={premiseDetails.meterStatus}></Field>
-                    <Field label="RC/DC Meter" value={premiseDetails.rddcMeter}></Field>
-                    <Field label="Revenue Class" value={premiseDetails.revenueClass}></Field>
+                    <Field
+                      label="Meter Point Status"
+                      value={premiseDetails.meterPointStatus}
+                    ></Field>
+                    <Field
+                      label="Meter Status"
+                      value={premiseDetails.meterStatus}
+                    ></Field>
+                    <Field
+                      label="RC/DC Meter"
+                      value={premiseDetails.rddcMeter}
+                    ></Field>
+                    <Field
+                      label="Revenue Class"
+                      value={premiseDetails.revenueClass}
+                    ></Field>
                     <Field label="Rate" value="Residential"></Field>
-                    <Field label="PrePay Eligible" value={premiseDetails.prepayEligible}></Field>
+                    <Field
+                      label="PrePay Eligible"
+                      value={premiseDetails.prepayEligible}
+                    ></Field>
                   </div>
                 </Section>
                 <Section title="Pending Orders" open={true} noBtn>
@@ -216,7 +300,11 @@ const PremiseInfo = (props) => {
                     </tbody>
                   </table>
                 )}
-                {premiseDetails?.obligations?.length === 0 && <h6 style={{ textAlign: "center", color: "blue" }}>This premise has no obligations</h6>}
+                {premiseDetails?.obligations?.length === 0 && (
+                  <h6 style={{ textAlign: "center", color: "blue" }}>
+                    This premise has no obligations
+                  </h6>
+                )}
               </Section>
             </div>
           )}

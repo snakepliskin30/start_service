@@ -12,6 +12,7 @@ const useAccordionPanelStore = create(
     openMailingAddress: false,
     openRateOptions: false,
     openFinalItems: false,
+    showModal: false,
     setOpenPremise: (openPremise) => set({ openPremise }),
     setOpenCustomerInfo: (openCustomerInfo) => set({ openCustomerInfo }),
     setOpenCreditCheck: (openCreditCheck) => set({ openCreditCheck }),
@@ -21,6 +22,7 @@ const useAccordionPanelStore = create(
     setOpenMailingAddress: (openMailingAddress) => set({ openMailingAddress }),
     setOpenRateOptions: (openRateOptions) => set({ openRateOptions }),
     setOpenFinalItems: (openFinalItems) => set({ openFinalItems }),
+    setShowModal: (showModal) => set({ showModal }),
   }))
 );
 

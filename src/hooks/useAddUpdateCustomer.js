@@ -55,7 +55,10 @@ const useAddUpdateCustomer = () => {
     };
     const BaseRequest = {
       transactionId: "1234567890",
-      userId: process.env.NODE_ENV === "production" ? userId : process.env.REACT_APP_OSVC_USER_ID,
+      userId:
+        process.env.NODE_ENV === "production"
+          ? userId
+          : process.env.REACT_APP_OSVC_USER_ID,
     };
 
     Payload.BaseRequest = BaseRequest;
@@ -64,7 +67,10 @@ const useAddUpdateCustomer = () => {
     Request.Payload = Payload;
 
     const requestString = JSON.stringify(Request);
-    const url = process.env.NODE_ENV === "production" ? `${interfaceUrl}/php/custom/socoapicalls.php` : process.env.REACT_APP_DEV_URL;
+    const url =
+      process.env.NODE_ENV === "production"
+        ? `${interfaceUrl}/php/custom/socoapicalls.php`
+        : process.env.REACT_APP_DEV_URL;
     const formData = new FormData();
     formData.append("data", requestString);
     formData.append("apiUrl", "CUSTOM_CFG_SOCOMLP_CREATE_CUSTOMER");
@@ -82,9 +88,8 @@ const useAddUpdateCustomer = () => {
     });
 
     const data = await response.json();
-    const premiseResults = Array.from(new Set(data.Payload.AddressInfo.map((s) => s.premiseNo))).map((premiseNum) => data.Payload.AddressInfo.find((d) => d.premiseNo === premiseNum));
     setCustomerInfoLoad(false);
-    return premiseResults;
+    return data;
   };
 
   return { customerInfoLoad, addUpdateCustomer };

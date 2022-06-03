@@ -15,15 +15,32 @@ import useAddUpdateCustomer from "../../hooks/useAddUpdateCustomer";
 
 import StartServiceContext from "../../store/StartServiceContext";
 import useAccordionPanelStore from "../../store/AccordionPanelStore";
+import useCustomerInfoStore from "../../store/CustomerInfoStore";
+import useModalStore from "../../store/ModalStore";
 
 import { titleOptions, suffixOptions, stateOptions } from "../../lov/options";
 
 const CustomerInfo = () => {
   const ctx = useContext(StartServiceContext);
-  const openCustomerInfo = useAccordionPanelStore((state) => state.openCustomerInfo);
-  const setOpenPremise = useAccordionPanelStore((state) => state.setOpenPremise);
-  const setOpenCustomerInfo = useAccordionPanelStore((state) => state.setOpenCustomerInfo);
-  const setOpenCreditCheck = useAccordionPanelStore((state) => state.setOpenCreditCheck);
+  const openCustomerInfo = useAccordionPanelStore(
+    (state) => state.openCustomerInfo
+  );
+  const setOpenPremise = useAccordionPanelStore(
+    (state) => state.setOpenPremise
+  );
+  const setOpenCustomerInfo = useAccordionPanelStore(
+    (state) => state.setOpenCustomerInfo
+  );
+  const setOpenCreditCheck = useAccordionPanelStore(
+    (state) => state.setOpenCreditCheck
+  );
+  const setCustomerInfo = useCustomerInfoStore(
+    (state) => state.setCustomerInfo
+  );
+  const setShowModal = useModalStore((state) => state.setShowModal);
+  const setModalYLoc = useModalStore((state) => state.setModalYLoc);
+
+  const [customerNo, setCustomerNo] = useState("");
   const [title, setTitle] = useState("");
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
@@ -50,13 +67,14 @@ const CustomerInfo = () => {
   const [stateValidation, setStateValidation] = useState({ error: "" });
   const [otherInfoValidation, setOtherInfoValidation] = useState({ error: "" });
   const [commentValidation, setCommentValidation] = useState({ error: "" });
-  const [invokedAddUpdateCustomer, setInvokeAddUpdateCustomer] = useState(false);
+  const [invokedAddUpdateCustomer, setInvokeAddUpdateCustomer] =
+    useState(false);
 
   const { customerInfoLoad, addUpdateCustomer } = useAddUpdateCustomer();
 
   const getFullName = () => {
     let fullName = `${title} ${firstName} ${middleName} ${lastName} ${suffix}`;
-    return fullName.replace(/\s+/g).trim();
+    return fullName.replace(/\s+/g, " ").trim();
   };
 
   const validateForm = () => {
@@ -161,12 +179,42 @@ const CustomerInfo = () => {
         interfaceUrl,
         userId,
       };
-      addUpdateCustomer(custInfo);
+      const data = await addUpdateCustomer(custInfo);
+      if (data.Result.status.toLowerCase() === "ok") {
+        let custInfo = {
+          firstName,
+          middleName,
+          lastName,
+          primaryPhone,
+          altPhone,
+          email,
+          customerNo,
+        };
+        if (data?.Payload) {
+          setCustomerNo(
+            data.Payload.CreateCustomerResponse?.customer?.customerNo
+          );
+          custInfo = {
+            ...custInfo,
+            customerNo:
+              data.Payload.CreateCustomerResponse?.customer?.customerNo,
+          };
+        }
+        setCustomerInfo(custInfo);
+        setInvokeAddUpdateCustomer(true);
+      }
     }
   };
 
-  const custInfoNext = () => {
-    console.log("test");
+  const custInfoNext = (e) => {
+    if (!invokedAddUpdateCustomer) {
+      const yLoc = e.pageY - 500;
+      console.log(yLoc);
+      setModalYLoc(yLoc);
+      setShowModal(true);
+      return;
+    }
+
     setOpenCustomerInfo(false);
     setOpenCreditCheck(true);
   };
@@ -177,30 +225,90 @@ const CustomerInfo = () => {
   };
 
   return (
-    <Accordion title="Customer Information" id="custInfo" open={openCustomerInfo} setOpen={setOpenCustomerInfo}>
-      {/* {customerInfoLoad && <Spinner />} */}
+    <Accordion
+      title="Customer Information"
+      id="custInfo"
+      open={openCustomerInfo}
+      setOpen={setOpenCustomerInfo}
+    >
+      {customerInfoLoad && <Spinner />}
       <form onSubmit={customerInfoHandler}>
         <div className={classes.main}>
           <div className={classes.item_a}>
-            <InputSelect label="Title" id="title" value={title} onChange={setTitle} options={titleOptions} />
+            <InputSelect
+              label="Title"
+              id="title"
+              value={title}
+              onChange={(val) => {
+                setTitle(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+              options={titleOptions}
+            />
           </div>
           <div className={classes.item_b}>
-            <Input label="First Name" id="firstName" required={true} value={firstName} onChange={setFirstName} error={firstNameValidation.error} />
+            <Input
+              label="First Name"
+              id="firstName"
+              required={true}
+              value={firstName}
+              onChange={(val) => {
+                console.log(val);
+                setFirstName(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+              error={firstNameValidation.error}
+            />
           </div>
           <div className={classes.item_c}>
-            <Input label="Middle Name" id="middleName" value={middleName} onChange={setMiddleName} />
+            <Input
+              label="Middle Name"
+              id="middleName"
+              value={middleName}
+              onChange={setMiddleName}
+            />
           </div>
           <div className={classes.item_d}>
-            <Input label="Last Name" id="lastName" required={true} value={lastName} onChange={setLastName} error={lastNameValidation.error} />
+            <Input
+              label="Last Name"
+              id="lastName"
+              required={true}
+              value={lastName}
+              onChange={(val) => {
+                setLastName(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+              error={lastNameValidation.error}
+            />
           </div>
           <div className={classes.item_e}>
-            <InputSelect label="Suffix" id="suffix" value={suffix} onChange={setSuffix} options={suffixOptions} />
+            <InputSelect
+              label="Suffix"
+              id="suffix"
+              value={suffix}
+              onChange={(val) => {
+                setSuffix(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+              options={suffixOptions}
+            />
           </div>
           <div className={classes.item_x}>
             <ButtonCancel>Copy</ButtonCancel>
           </div>
           <div className={classes.item_f}>
-            <InputNumber label="SSN/TIN" id="ssntin" options={{ blocks: [3, 2, 4], delimiter: "-" }} required={true} value={ssn} onChange={setSSN} error={ssnValidation.error} />
+            <InputNumber
+              label="SSN/TIN"
+              id="ssntin"
+              options={{ blocks: [3, 2, 4], delimiter: "-" }}
+              required={true}
+              value={ssn}
+              onChange={(val) => {
+                setSSN(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+              error={ssnValidation.error}
+            />
           </div>
           <div className={classes.item_g}>
             <InputNumber
@@ -209,12 +317,24 @@ const CustomerInfo = () => {
               options={{ blocks: [3, 3, 4], delimiter: "-" }}
               required={true}
               value={primaryPhone}
-              onChange={setPrimaryPhone}
+              onChange={(val) => {
+                setPrimaryPhone(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
               error={primaryPhoneValidation.error}
             />
           </div>
           <div className={classes.item_h}>
-            <InputNumber label="Alternate Phone" id="altPhone" options={{ blocks: [3, 3, 4], delimiter: "-" }} value={altPhone} onChange={setAltPhone} />
+            <InputNumber
+              label="Alternate Phone"
+              id="altPhone"
+              options={{ blocks: [3, 3, 4], delimiter: "-" }}
+              value={altPhone}
+              onChange={(val) => {
+                setAltPhone(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+            />
           </div>
           <div className={classes.item_i}>
             <InputDatePicker
@@ -222,6 +342,7 @@ const CustomerInfo = () => {
               id="dob"
               onChange={(date) => {
                 setDob(date);
+                setInvokeAddUpdateCustomer(false);
               }}
               value={dob}
               changeYear={true}
@@ -235,18 +356,49 @@ const CustomerInfo = () => {
               value={ssnNotProvided}
               onChange={(e) => {
                 setSSNNotProvided(e.target.checked);
+                setInvokeAddUpdateCustomer(false);
               }}
             />
             <label htmlFor="ssnnotprovided">SSN/TIN not provided</label>
           </div>
           <div className={classes.item_k}>
-            <Input label="Email Address" id="email" required={true} value={email} onChange={setEmail} error={emailValidation.error} />
+            <Input
+              label="Email Address"
+              id="email"
+              required={true}
+              value={email}
+              onChange={(val) => {
+                setEmail(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+              error={emailValidation.error}
+            />
           </div>
           <div className={classes.item_l}>
-            <InputNumber label="Driver's License Number" id="driverslicense" options={{ blocks: [15] }} value={driversLicense} onChange={setDriversLicense} />
+            <InputNumber
+              label="Driver's License Number"
+              id="driverslicense"
+              options={{ blocks: [15] }}
+              value={driversLicense}
+              onChange={(val) => {
+                setDriversLicense(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+            />
           </div>
           <div className={classes.item_m}>
-            <InputSelect label="State" id="state" required={true} value={driversLicenseState} onChange={setDriversLicenseState} error={stateValidation.error} options={stateOptions} />
+            <InputSelect
+              label="State"
+              id="state"
+              required={true}
+              value={driversLicenseState}
+              onChange={(val) => {
+                setDriversLicenseState(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+              error={stateValidation.error}
+              options={stateOptions}
+            />
           </div>
           <div className={`${classes.item_n} checkbox`}>
             <input
@@ -256,15 +408,36 @@ const CustomerInfo = () => {
               value={emailNotProvided}
               onChange={(e) => {
                 setEmailNotProvided(e.target.checked);
+                setInvokeAddUpdateCustomer(false);
               }}
             />
             <label htmlFor="emailnotprovided">Email address not provided</label>
           </div>
           <div className={classes.item_o}>
-            <TextArea label="Other Customer Information" id="otherInfo" required={true} value={otherInfo} onChange={setOtherInfo} error={otherInfoValidation.error} />
+            <TextArea
+              label="Other Customer Information"
+              id="otherInfo"
+              required={true}
+              value={otherInfo}
+              onChange={(val) => {
+                setOtherInfo(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+              error={otherInfoValidation.error}
+            />
           </div>
           <div className={classes.item_p}>
-            <TextArea label="Comments" id="comments" required={true} value={comments} onChange={setComments} error={commentValidation.error} />
+            <TextArea
+              label="Comments"
+              id="comments"
+              required={true}
+              value={comments}
+              onChange={(val) => {
+                setComments(val);
+                setInvokeAddUpdateCustomer(false);
+              }}
+              error={commentValidation.error}
+            />
           </div>
           <div className={`${classes.item_q} btnGrp`}>
             <ButtonCancel type="Submit">Add Customer</ButtonCancel>

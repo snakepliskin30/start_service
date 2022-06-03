@@ -8,24 +8,30 @@ import Paperless from "./Paperless";
 import MailingAddress from "./MailingAddress";
 import RateOptions from "./RateOptions";
 import FinalItems from "./FinalItems";
+import Modal from "../layout/Modal";
 
-import StartServiceContext, { StartServiceContextProvider } from "../../store/StartServiceContext";
+import StartServiceContext, {
+  StartServiceContextProvider,
+} from "../../store/StartServiceContext";
 
 import classes from "./StartService.css";
 
 const StartService = () => {
   return (
-    <StartServiceContextProvider>
-      <PremiseInfo />
-      <CustomerInfo />
-      <CreditCheck />
-      <Deposit />
-      <Lease />
-      <Paperless />
-      <MailingAddress />
-      <RateOptions />
-      <FinalItems />
-    </StartServiceContextProvider>
+    <div style={{ position: "relative" }}>
+      <StartServiceContextProvider>
+        <Modal />
+        <PremiseInfo />
+        <CustomerInfo />
+        <CreditCheck />
+        <Deposit />
+        <Lease />
+        <Paperless />
+        <MailingAddress />
+        <RateOptions />
+        <FinalItems />
+      </StartServiceContextProvider>
+    </div>
   );
 };
 
