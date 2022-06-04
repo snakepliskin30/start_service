@@ -22,21 +22,11 @@ import { titleOptions, suffixOptions, stateOptions } from "../../lov/options";
 
 const CustomerInfo = () => {
   const ctx = useContext(StartServiceContext);
-  const openCustomerInfo = useAccordionPanelStore(
-    (state) => state.openCustomerInfo
-  );
-  const setOpenPremise = useAccordionPanelStore(
-    (state) => state.setOpenPremise
-  );
-  const setOpenCustomerInfo = useAccordionPanelStore(
-    (state) => state.setOpenCustomerInfo
-  );
-  const setOpenCreditCheck = useAccordionPanelStore(
-    (state) => state.setOpenCreditCheck
-  );
-  const setCustomerInfo = useCustomerInfoStore(
-    (state) => state.setCustomerInfo
-  );
+  const openCustomerInfo = useAccordionPanelStore((state) => state.openCustomerInfo);
+  const setOpenPremise = useAccordionPanelStore((state) => state.setOpenPremise);
+  const setOpenCustomerInfo = useAccordionPanelStore((state) => state.setOpenCustomerInfo);
+  const setOpenCreditCheck = useAccordionPanelStore((state) => state.setOpenCreditCheck);
+  const setCustomerInfo = useCustomerInfoStore((state) => state.setCustomerInfo);
   const setShowModal = useModalStore((state) => state.setShowModal);
   const setModalYLoc = useModalStore((state) => state.setModalYLoc);
 
@@ -67,8 +57,7 @@ const CustomerInfo = () => {
   const [stateValidation, setStateValidation] = useState({ error: "" });
   const [otherInfoValidation, setOtherInfoValidation] = useState({ error: "" });
   const [commentValidation, setCommentValidation] = useState({ error: "" });
-  const [invokedAddUpdateCustomer, setInvokeAddUpdateCustomer] =
-    useState(false);
+  const [invokedAddUpdateCustomer, setInvokeAddUpdateCustomer] = useState(false);
 
   const { customerInfoLoad, addUpdateCustomer } = useAddUpdateCustomer();
 
@@ -191,13 +180,10 @@ const CustomerInfo = () => {
           customerNo,
         };
         if (data?.Payload) {
-          setCustomerNo(
-            data.Payload.CreateCustomerResponse?.customer?.customerNo
-          );
+          setCustomerNo(data.Payload.CreateCustomerResponse?.customer?.customerNo);
           custInfo = {
             ...custInfo,
-            customerNo:
-              data.Payload.CreateCustomerResponse?.customer?.customerNo,
+            customerNo: data.Payload.CreateCustomerResponse?.customer?.customerNo,
           };
         }
         setCustomerInfo(custInfo);
@@ -225,12 +211,7 @@ const CustomerInfo = () => {
   };
 
   return (
-    <Accordion
-      title="Customer Information"
-      id="custInfo"
-      open={openCustomerInfo}
-      setOpen={setOpenCustomerInfo}
-    >
+    <Accordion title="Customer Information" id="custInfo" open={openCustomerInfo} setOpen={setOpenCustomerInfo}>
       {customerInfoLoad && <Spinner />}
       <form onSubmit={customerInfoHandler}>
         <div className={classes.main}>
@@ -261,12 +242,7 @@ const CustomerInfo = () => {
             />
           </div>
           <div className={classes.item_c}>
-            <Input
-              label="Middle Name"
-              id="middleName"
-              value={middleName}
-              onChange={setMiddleName}
-            />
+            <Input label="Middle Name" id="middleName" value={middleName} onChange={setMiddleName} />
           </div>
           <div className={classes.item_d}>
             <Input
@@ -452,4 +428,4 @@ const CustomerInfo = () => {
   );
 };
 
-export default CustomerInfo;
+export default React.memo(CustomerInfo);

@@ -10,6 +10,7 @@
 
 # production
 /build
+/Start_Service_React
 
 # misc
 .DS_Store

@@ -77,4 +77,4 @@ function Paperless() {
   );
 }
 
-export default Paperless;
+export default React.memo(Paperless);

@@ -85,4 +85,4 @@ function Deposit() {
   );
 }
 
-export default Deposit;
+export default React.memo(Deposit);

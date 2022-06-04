@@ -91,4 +91,4 @@ function MailingAddress() {
   );
 }
 
-export default MailingAddress;
+export default React.memo(MailingAddress);

@@ -78,4 +78,4 @@ function CreditCheck() {
   );
 }
 
-export default CreditCheck;
+export default React.memo(CreditCheck);

@@ -100,4 +100,4 @@ function FinalItems() {
   );
 }
 
-export default FinalItems;
+export default React.memo(FinalItems);

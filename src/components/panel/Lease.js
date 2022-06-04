@@ -83,4 +83,4 @@ function Lease() {
   );
 }
 
-export default Lease;
+export default React.memo(Lease);
