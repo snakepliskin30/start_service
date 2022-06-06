@@ -1,10 +1,12 @@
 import React, { useContext, useState } from "react";
+import useStartService from "../../hooks/useStartService";
 import Accordion from "../layout/Accordion";
 import Input from "../ui/Input";
 import InputNumber from "../ui/InputNumber";
 import InputDatePicker from "../ui/InputDatePicker";
 import ButtonCancel from "../ui/ButtonCancel";
 import ButtonSubmit from "../ui/ButtonSubmit";
+import Spinner from "../ui/Spinner";
 
 import classes from "./FinalItems.module.css";
 
@@ -19,7 +21,13 @@ import useMailingStore from "../../store/MailingStore";
 import useRateStore from "../../store/RateStore";
 
 function FinalItems() {
+  const { startServiceLoad, startServiceRequest } = useStartService();
   const ctx = useContext(StartServiceContext);
+  const profileId = ctx.osvcProfileId;
+  const token = ctx.osvcSessionToken;
+  const interfaceUrl = ctx.osvcInterfaceUrl;
+  const userId = ctx.osvcLoginName;
+
   const openFinalItems = useAccordionPanelStore((state) => state.openFinalItems);
   const setOpenFinalItems = useAccordionPanelStore((state) => state.setOpenFinalItems);
   const setOpenRateOptions = useAccordionPanelStore((state) => state.setOpenRateOptions);
@@ -58,7 +66,7 @@ function FinalItems() {
     setOpenRateOptions(true);
   };
 
-  const callStartService = (e) => {
+  const callStartService = async (e) => {
     e.preventDefault();
     console.log(ctxPremise);
     console.log(ctxCustomer);
@@ -67,9 +75,25 @@ function FinalItems() {
     console.log(ctxPaperless);
     console.log(ctxMailing);
     console.log(ctxRate);
+    const response = await startServiceRequest(
+      ctxPremise,
+      ctxCustomer,
+      ctxDeposit,
+      ctxLease,
+      ctxPaperless,
+      ctxMailing,
+      ctxRate,
+      dateWanted,
+      profileId,
+      token,
+      interfaceUrl,
+      userId
+    );
+    console.log(response);
   };
   return (
     <Accordion title="Final Items" id="finalItems" open={openFinalItems} setOpen={setOpenFinalItems}>
+      {startServiceLoad && <Spinner />}
       <form className={classes.main} onSubmit={callStartService}>
         <div className={classes.finalItemForm}>
           <InputDatePicker

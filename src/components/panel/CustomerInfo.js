@@ -195,7 +195,6 @@ const CustomerInfo = () => {
   const custInfoNext = (e) => {
     if (!invokedAddUpdateCustomer) {
       const yLoc = e.pageY - 500;
-      console.log(yLoc);
       setModalYLoc(yLoc);
       setShowModal(true);
       return;
@@ -234,7 +233,6 @@ const CustomerInfo = () => {
               required={true}
               value={firstName}
               onChange={(val) => {
-                console.log(val);
                 setFirstName(val);
                 setInvokeAddUpdateCustomer(false);
               }}
