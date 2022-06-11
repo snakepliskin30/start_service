@@ -9,40 +9,51 @@ export const useServiceCloudEnv = () => {
   const [osvcInterfaceUrlREST, setOsvcInterfaceUrlREST] = useState("");
   const [osvcEnvironmentParams, setOsvcEnvironmentParams] = useState({});
   const [osvcLoginName, setOsvcLoginName] = useState("");
+  const [osvcLoginPhone, setOsvcLoginPhone] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
 
   const getOsVcEnvValues = useCallback(async () => {
-    // eslint-disable-next-line no-undef
-    const IExtensionProvider = await ORACLE_SERVICE_CLOUD.extension_loader.load("ExternalSearchResultsExt", "1");
-    const globalContext = await IExtensionProvider.getGlobalContext();
-    const sessionToken = await globalContext.getSessionToken();
-    const profileId = globalContext.getProfileId();
-    const interfaceUrl = globalContext.getInterfaceUrl();
-    const interfaceUrlREST = globalContext.getInterfaceServiceUrl("REST");
-    let userId;
+    try {
+      // eslint-disable-next-line no-undef
+      const IExtensionProvider = await ORACLE_SERVICE_CLOUD.extension_loader.load("ExternalSearchResultsExt", "1");
+      const globalContext = await IExtensionProvider.getGlobalContext();
+      const sessionToken = await globalContext.getSessionToken();
+      const profileId = globalContext.getProfileId();
+      const interfaceUrl = globalContext.getInterfaceUrl();
+      const interfaceUrlREST = globalContext.getInterfaceServiceUrl("REST");
 
-    globalContext.invokeAction("getLoggedInDetails").then((loggedInName) => {
-      const userDetails = loggedInName.result.find((i) => i != null);
-      userId = userDetails.login.split("@")[0].toUpperCase();
+      globalContext.invokeAction("getLoggedInDetails").then((loggedInName) => {
+        const userDetails = loggedInName.result.find((i) => i != null);
+        const userId = userDetails.login.split("@")[0].toUpperCase();
+        const phone = userDetails.phone || userDetails.phone === "null" ? userDetails.phone : "";
 
-      setOsvcExtensionProv(IExtensionProvider);
-      setOsvcGlobalContext(globalContext);
-      setOsvcSessionToken(sessionToken);
-      setOsvcProfileId(profileId);
-      setOsvcInterfaceUrl(interfaceUrl);
-      setOsvcInterfaceUrlREST(interfaceUrlREST);
-      setOsvcLoginName(userId);
-      setOsvcEnvironmentParams({
-        osvcExtensionProv,
-        osvcGlobalContext,
-        osvcSessionToken,
-        osvcProfileId,
-        osvcLoginName,
-        osvcInterfaceUrl,
-        osvcInterfaceUrlREST,
+        setOsvcExtensionProv(IExtensionProvider);
+        setOsvcGlobalContext(globalContext);
+        setOsvcSessionToken(sessionToken);
+        setOsvcProfileId(profileId);
+        setOsvcInterfaceUrl(interfaceUrl);
+        setOsvcInterfaceUrlREST(interfaceUrlREST);
+        setOsvcLoginName(userId);
+        setOsvcLoginPhone(phone);
+        setOsvcEnvironmentParams({
+          osvcExtensionProv,
+          osvcGlobalContext,
+          osvcSessionToken,
+          osvcProfileId,
+          osvcLoginName,
+          osvcInterfaceUrl,
+          osvcInterfaceUrlREST,
+        });
+        IExtensionProvider.registerWorkspaceExtension(async (workspaceRecord) => {
+          const IFieldDetails = await workspaceRecord.getFieldValues(["Contact.c$acct_num"]);
+          setAccountNumber(IFieldDetails.getField("Contact.c$acct_num")?.getLabel()?.replace(/\W/g, ""));
+
+          return true;
+        });
       });
-    });
-
-    return true;
+    } catch (err) {
+      return true;
+    }
   }, []);
 
   return {
@@ -53,6 +64,7 @@ export const useServiceCloudEnv = () => {
     osvcInterfaceUrl,
     osvcInterfaceUrlREST,
     osvcEnvironmentParams,
+    accountNumber,
     getOsVcEnvValues,
   };
 };

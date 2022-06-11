@@ -171,6 +171,7 @@ const CustomerInfo = () => {
       const data = await addUpdateCustomer(custInfo);
       if (data.Result.status.toLowerCase() === "ok") {
         let custInfo = {
+          ssn,
           firstName,
           middleName,
           lastName,
@@ -188,6 +189,8 @@ const CustomerInfo = () => {
         }
         setCustomerInfo(custInfo);
         setInvokeAddUpdateCustomer(true);
+        setOpenCustomerInfo(false);
+        setOpenCreditCheck(true);
       }
     }
   };

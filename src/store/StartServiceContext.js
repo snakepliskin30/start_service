@@ -4,15 +4,7 @@ import { useServiceCloudEnv } from "../hooks/useServiceCloudEnv";
 const StartServiceContext = createContext();
 
 export const StartServiceContextProvider = ({ children }) => {
-  const {
-    osvcExtensionProv,
-    osvcSessionToken,
-    osvcProfileId,
-    osvcLoginName,
-    osvcInterfaceUrl,
-    osvcInterfaceUrlREST,
-    getOsVcEnvValues,
-  } = useServiceCloudEnv();
+  const { osvcExtensionProv, osvcSessionToken, osvcProfileId, osvcLoginName, osvcLoginPhone, osvcInterfaceUrl, osvcInterfaceUrlREST, accountNumber, getOsVcEnvValues } = useServiceCloudEnv();
 
   useEffect(() => {
     getOsVcEnvValues();
@@ -25,8 +17,10 @@ export const StartServiceContextProvider = ({ children }) => {
         osvcSessionToken,
         osvcProfileId,
         osvcLoginName,
+        osvcLoginPhone,
         osvcInterfaceUrl,
         osvcInterfaceUrlREST,
+        accountNumber,
       }}
     >
       {children}

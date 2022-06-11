@@ -1,26 +1,26 @@
 export const titleOptions = Object.freeze([
   {
-    value: "Mr",
-    display: "Mr",
+    value: "MR",
+    display: "MR",
   },
   {
-    value: "Ms",
-    display: "Ms",
+    value: "MS",
+    display: "MS",
   },
   {
-    value: "Mrs",
-    display: "Mrs",
+    value: "MRS",
+    display: "MRS",
   },
   {
-    value: "Lt",
-    display: "Lt",
+    value: "LT",
+    display: "LT",
   },
 ]);
 
 export const suffixOptions = Object.freeze([
   {
-    value: "Jr",
-    display: "Jr",
+    value: "JR",
+    display: "JR",
   },
   {
     value: "I",
@@ -150,3 +150,29 @@ export const rateOptions = Object.freeze([
     display: "Smart Usage",
   },
 ]);
+
+export const meterPointStatus = Object.freeze({
+  A: "Active",
+  I: "Inactive",
+  M: "Transfer",
+  P: "Pending",
+  R: "Removed",
+});
+
+export const meterStatus = Object.freeze({
+  A: "Removed Mtr Svc Cut At Pole",
+  B: "Removed Mtr-Cut At Weatherhead",
+  C: "Cut At Weatherhead",
+  D: "Cut At Underground Transformer",
+  E: "Rmvd Mtr-Cut At Undrgrnd Trans",
+  F: "Transformer Fuse Open",
+  G: "Rmvd Mtr-Transformer Fuse Open",
+  H: "Cut Out Non-Pay",
+  I: "Inactive Off",
+  J: "Removed Mtr-Cut Out Non-Pay",
+  L: "PrePay Off",
+  O: greenText("On"),
+  P: "Service Cut At Pole",
+  R: "Removed",
+  V: "Removed Mtr Svc Cut At Pole",
+});

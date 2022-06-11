@@ -22,3 +22,22 @@ body {
   display: flex;
   gap: 20px;
 }
+
+.banner-container {
+  border-left-width: 5px !important;
+  background: rgba(255, 255, 255, 0.94);
+}
+.banner-icon,
+.pheader-icon {
+  width: 35px;
+  height: 35px;
+}
+.banner-icon {
+  border-width: 2px !important;
+}
+.banner-icon i,
+.pheader-icon i {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
